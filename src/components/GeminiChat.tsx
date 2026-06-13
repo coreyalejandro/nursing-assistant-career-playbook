@@ -84,6 +84,13 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900 text-sm font-sans">
+        
+        {/* PHI Security Warning Banner */}
+        <div className="bg-rose-950/40 border border-rose-800 p-3 rounded text-rose-200 text-xs">
+          <strong className="text-rose-400 block mb-1 uppercase tracking-wider text-[10px] font-black">⚠️ HIPAA / Privacy Security Notice</strong>
+          Do not enter patient names, resident details, or specific Protected Health Information (PHI) in this chat workspace.
+        </div>
+
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`p-3 max-w-[80%] ${msg.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-200 border border-slate-700'}`}>
@@ -100,6 +107,28 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
       </div>
 
       <div className="p-3 bg-slate-950 border-t-2 border-slate-800 space-y-2">
+         {/* Diagnostic Quick Action Pill Menu */}
+         <div className="flex gap-2 pb-1 overflow-x-auto no-scrollbar scroll-smooth">
+           <button 
+             onClick={() => { setInput("I am feeling completely burned out and exhausted."); sendMessage('lite'); }}
+             className="whitespace-nowrap px-3 py-1 bg-slate-800 text-rose-400 border border-slate-700 hover:bg-slate-700 text-xs font-bold rounded-full transition-colors cursor-pointer"
+           >
+             🚨 Feeling Burned Out
+           </button>
+           <button 
+             onClick={() => { setInput("Can you simulate a short CNA behavioral mock interview for me?"); sendMessage('chat'); }}
+             className="whitespace-nowrap px-3 py-1 bg-slate-800 text-emerald-400 border border-slate-700 hover:bg-slate-700 text-xs font-bold rounded-full transition-colors cursor-pointer"
+           >
+             🎤 Mock Interview
+           </button>
+           <button 
+             onClick={() => { setInput("What do I need to know about CNA license reciprocity if I move to a new state?"); sendMessage('search'); }}
+             className="whitespace-nowrap px-3 py-1 bg-slate-800 text-blue-400 border border-slate-700 hover:bg-slate-700 text-xs font-bold rounded-full transition-colors cursor-pointer"
+           >
+             🗺️ State Reciprocity
+           </button>
+         </div>
+
          <div className="flex gap-2">
             <input 
               type="text" 
@@ -114,13 +143,13 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
             </button>
          </div>
          <div className="flex gap-2 text-xs font-mono w-full items-stretch">
-            <button onClick={() => sendMessage('search')} className="flex-1 bg-slate-800 text-blue-400 hover:bg-slate-700 p-1.5 flex justify-center items-center gap-1 border border-slate-700" title="Use Google Search Grounding">
+            <button onClick={() => sendMessage('search')} className="flex-1 bg-slate-800 text-blue-400 hover:bg-slate-700 p-1.5 flex justify-center items-center gap-1 border border-slate-700 cursor-pointer" title="Use Google Search Grounding">
               <Search className="w-3.5 h-3.5" /> Search
             </button>
-            <button onClick={() => sendMessage('maps')} className="flex-1 bg-slate-800 text-emerald-400 hover:bg-slate-700 p-1.5 flex justify-center items-center gap-1 border border-slate-700" title="Use Google Maps Grounding">
+            <button onClick={() => sendMessage('maps')} className="flex-1 bg-slate-800 text-emerald-400 hover:bg-slate-700 p-1.5 flex justify-center items-center gap-1 border border-slate-700 cursor-pointer" title="Use Google Maps Grounding">
               <MapPin className="w-3.5 h-3.5" /> Maps
             </button>
-            <button onClick={() => sendMessage('lite')} className="flex-1 bg-slate-800 text-yellow-400 hover:bg-slate-700 p-1.5 flex justify-center items-center gap-1 border border-slate-700" title="Use Flash Lite for fast responses">
+            <button onClick={() => sendMessage('lite')} className="flex-1 bg-slate-800 text-yellow-400 hover:bg-slate-700 p-1.5 flex justify-center items-center gap-1 border border-slate-700 cursor-pointer" title="Use Flash Lite for fast responses">
               <Zap className="w-3.5 h-3.5" /> Fast
             </button>
          </div>

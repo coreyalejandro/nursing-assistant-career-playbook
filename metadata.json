@@ -1,5 +1,5 @@
 {
-  "name": "Nursing Assistant Career Playbook",
+  "name": "Certified Nursing Assistant (CNA) Career Playbook",
   "description": "An interactive, proactively auto-updating career optimization playbook for Certified Nursing Assistants, tailored to Carla Miranda's 13+ years of excellence.",
   "requestFramePermissions": ["microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

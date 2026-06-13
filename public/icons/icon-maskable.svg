@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CNA Career Playbook">
+  <!-- Full-bleed background for maskable safe zone -->
+  <rect width="512" height="512" fill="#0f172a"/>
+  <path d="M256 372c-7 0-14-3-19-8l-84-81c-30-29-30-76 0-105 26-25 68-25 94 1l9 9 9-9c26-26 68-26 94-1 30 29 30 76 0 105l-84 81c-5 5-12 8-19 8z" fill="#f59e0b"/>
+  <path d="M165 256h46l17-38 24 80 19-50 12 8h64" fill="none" stroke="#0f172a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "updatedAt": "2026-06-13",
+  "note": "Static, connection-free CNA guidance. Federally accurate baseline; always confirm state specifics on your official Nurse Aide Registry when back online.",
+  "crisis": {
+    "line": "988 Suicide & Crisis Lifeline",
+    "how": "Call or text 988 — 24/7, free, confidential.",
+    "text": "You are not alone. If you're exhausted, hopeless, or in crisis, reach out — support is available right now."
+  },
+  "certificationBasics": [
+    "Complete a state-approved nurse aide training program (federal minimum 75 hours, 16+ clinical; many states require more).",
+    "Pass the competency exam: a written/oral knowledge test plus a hands-on skills demonstration.",
+    "Clear a criminal background check and required health screenings (e.g., TB test, immunizations).",
+    "Get listed on your state's Nurse Aide Registry before working for pay.",
+    "Renew every 24 months with proof of paid nursing-related work."
+  ],
+  "scopeAndPrivacy": [
+    "Stay within your scope of practice: report changes in condition to your supervising nurse; never give medical advice or medication.",
+    "Protect resident privacy (HIPAA): don't share names, room numbers, or record numbers outside care needs.",
+    "Document at the point of care — accurate, timely, objective."
+  ],
+  "interviewStar": {
+    "framework": "Situation → Task → Action → Result",
+    "prepStories": [
+      "A time you de-escalated an agitated or anxious resident.",
+      "A fall or injury you helped prevent.",
+      "A teamwork or hand-off win during a busy shift.",
+      "A difficult family conversation you handled with empathy."
+    ]
+  },
+  "resumeKeywords": [
+    "ADL assistance", "vital signs monitoring", "point-of-care documentation (EHR)",
+    "infection control", "fall prevention / CDC STEADI", "safe patient transfers & mobility",
+    "dementia & behavioral redirection", "wound care support", "HIPAA compliance"
+  ]
+}

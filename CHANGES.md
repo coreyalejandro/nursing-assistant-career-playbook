@@ -1,0 +1,37 @@
+# CHANGES — Hardening Pass (technical)
+
+Build status: `tsc --noEmit` ✅ · `vite build` ✅ · `esbuild` server bundle ✅ · live server smoke test ✅
+
+## New files
+- **`server/security.ts`** — dependency-free hardening: `securityHeaders()` (CSP, HSTS, nosniff, X-Frame-Options, Permissions-Policy), `createRateLimiter()` (in-memory fixed-window per IP), `createSessionQuota()` (per-session daily AI budget), `redactHighRiskPHI()` (strips SSN/card/MRN before the model), `scrubForLog()` + `safeLog/Warn/Error` (PII-redacting logging), `sanitizeClientError()` (no internal leakage), `TTLCache`, `getClientIp()` (X-Forwarded-For aware).
+- **`server/safety.ts`** — `SAFETY_SETTINGS` (HARASSMENT / HATE / SEXUAL / DANGEROUS → BLOCK_MEDIUM_AND_ABOVE) applied to every Gemini call; `withSafety()` helper; hardened, injection-resistant `CNA_COACH_SYSTEM_INSTRUCTION`; upgraded `LIVE_VOICE_SYSTEM_INSTRUCTION` (was "You are a helpful CNA assistant"). Note: `HARM_CATEGORY_MEDICAL` from the audit does not exist in the Gemini API — medical refusal is enforced via DANGEROUS_CONTENT + the system instruction.
+- **`server/stateRequirements.ts`** — deterministic CNA certification lookup for **all 50 states + DC**. Federally-accurate baseline steps (OBRA '87 / 42 CFR §483) for every state; verified specifics for CA/TX/GA/NY/FL; authoritative "verify on official registry" link + `verified:false` everywhere else (no invented fees/steps). Exposes `getStateReqs()` and `STATE_OPTIONS`.
+- **`public/manifest.webmanifest`, `public/sw.js`, `public/offline.html`, `public/offline-content.json`, `public/icons/icon.svg`, `public/icons/icon-maskable.svg`** — installable PWA + offline fallback with static CNA guidance and the 988 line.
+- **`src/lib/i18n.tsx`** — EN/ES framework (`LanguageProvider`, `useI18n`, `t()`, `LanguageToggle`); safety-critical strings translated, English fallback for the rest.
+- **`src/lib/userProfile.ts`** — accounts/persistence hook on the existing Firebase + Firestore rules (scaffold, not yet mounted).
+- **`src/lib/tier.ts`** — free/pro/enterprise feature flags (scaffold).
+- **`src/components/ProgressTracker.tsx`** — progress dashboard UI (cert-renewal countdown + checklist; pure, ready to mount).
+- **`src/vite-env.d.ts`** — Vite client types.
+- **`START-HERE.md`, `ENTERPRISE.md`** — plain-language guide and enterprise architecture.
+
+## Rewritten / edited
+- **`server.ts`** — honors `process.env.PORT` (was hardcoded 3000); `trust proxy`; security headers; `express.json({limit:'64kb'})`; rate limiters on `/api` + stricter AI limiter + daily quota on AI routes; `SAFETY_SETTINGS` on chat/optimize/jobs/quiz/salary/live; PHI redaction on chat input + history; `sanitizeClientError()` on all error responses; PII-safe logging; **jobs + salary de-Georgia-fied** and salary anchored to BLS OEWS with 6h caching; honest salary fallback (no fake facilities); new `GET /api/states` and `GET /api/state-requirements`; quiz/state endpoints use the 50-state dataset; live-voice WebSocket gains origin allow-list + per-IP connection cap + real system instruction + safety settings.
+- **`index.html`** — real `<title>` + meta description + `theme-color` + manifest link + noscript; canonical app name.
+- **`src/main.tsx`** — wraps app in `LanguageProvider`; registers the service worker in production.
+- **`src/components/Navigation.tsx`** — `LanguageToggle` (desktop + mobile); canonical wordmark.
+- **`src/components/GeminiChat.tsx`** — i18n for greeting/HIPAA banner/labels/placeholder; fixed invalid `rose-450` class.
+- **`src/App.tsx`** — footer wordmark.
+- **`.env.example`** — documents `NODE_ENV`, `PORT`, `VITE_APP_TIER`.
+
+## What the audits got wrong (verified against the real code/live app)
+- **No plaintext prompt leak existed** — instructions were already in `systemInstruction`; the live app refuses extraction.
+- **Medical advice was already refused** with a HIPAA pivot and correct "report to your supervising nurse" routing.
+- **The skip-to-content link already existed**; the chat PHI banner already existed.
+- The app targets **gemini-3.5-flash / 3.1-flash-lite**, not Gemini 1.5 Pro.
+
+## Known follow-ups (still open)
+- Expand verified state specifics beyond 5 (dataset structure supports it; flip `verified:true` as you confirm each).
+- Mount `userProfile`/`ProgressTracker` behind a sign-in entry point; add push notifications.
+- Full-screen ES translation coverage; read-aloud for responses.
+- Enterprise tier build-out (see ENTERPRISE.md) for any PHI-containing use.
+- Cloud-side: key restriction, App Check, budget alerts, Secret-stored key rotation, optional Cloud Armor.

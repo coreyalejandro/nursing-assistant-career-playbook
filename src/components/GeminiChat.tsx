@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, MapPin, Search, Zap, Bot, X, Trash2 } from 'lucide-react';
+import { useI18n } from '../lib/i18n';
 
 export function GeminiChat({ onClose }: { onClose: () => void }) {
+  const { t } = useI18n();
   const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string }[]>(() => {
     const saved = localStorage.getItem('gemini_chat_history');
     if (saved) {
@@ -12,7 +14,7 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
       }
     }
     return [
-      { role: 'model', text: 'Hi! I am your AI career assistant. Ask me questions or use the buttons to search the web or get mapping information!' }
+      { role: 'model', text: t('assistant.greeting') }
     ];
   });
   const [input, setInput] = useState('');
@@ -29,7 +31,7 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
 
   const clearHistory = () => {
     const defaultMessages = [
-      { role: 'model', text: 'Hi! I am your AI career assistant. Ask me questions or use the buttons to search the web or get mapping information!' }
+      { role: 'model' as const, text: t('assistant.greeting') }
     ];
     setMessages(defaultMessages);
     localStorage.removeItem('gemini_chat_history');
@@ -67,13 +69,13 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
       <div className="flex bg-slate-950 p-3 border-b-2 border-slate-800 items-center justify-between">
         <div className="flex items-center gap-2">
           <Bot className="w-5 h-5 text-amber-400" />
-          <h3 className="font-mono font-bold text-slate-200">Gemini Assistant</h3>
+          <h3 className="font-mono font-bold text-slate-200">{t('assistant.title')}</h3>
         </div>
         <div className="flex items-center gap-2">
-          <button 
-            onClick={clearHistory} 
-            className="text-slate-400 hover:text-rose-450 p-1 rounded-sm hover:bg-slate-800 transition-colors"
-            title="Clear Chat History"
+          <button
+            onClick={clearHistory}
+            className="text-slate-400 hover:text-rose-400 p-1 rounded-sm hover:bg-slate-800 transition-colors"
+            title={t('assistant.clear')}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -87,8 +89,8 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
         
         {/* PHI Security Warning Banner */}
         <div className="bg-rose-950/40 border border-rose-800 p-3 rounded text-rose-200 text-xs">
-          <strong className="text-rose-400 block mb-1 uppercase tracking-wider text-[10px] font-black">⚠️ HIPAA / Privacy Security Notice</strong>
-          Do not enter patient names, resident details, or specific Protected Health Information (PHI) in this chat workspace.
+          <strong className="text-rose-400 block mb-1 uppercase tracking-wider text-[10px] font-black">⚠️ {t('hipaa.title')}</strong>
+          {t('hipaa.body')}
         </div>
 
         {messages.map((msg, i) => (
@@ -113,19 +115,19 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
              onClick={() => { setInput("I am feeling completely burned out and exhausted."); sendMessage('lite'); }}
              className="whitespace-nowrap px-3 py-1 bg-slate-800 text-rose-400 border border-slate-700 hover:bg-slate-700 text-xs font-bold rounded-full transition-colors cursor-pointer"
            >
-             🚨 Feeling Burned Out
+             🚨 {t('chat.burnout')}
            </button>
            <button 
              onClick={() => { setInput("Can you simulate a short CNA behavioral mock interview for me?"); sendMessage('chat'); }}
              className="whitespace-nowrap px-3 py-1 bg-slate-800 text-emerald-400 border border-slate-700 hover:bg-slate-700 text-xs font-bold rounded-full transition-colors cursor-pointer"
            >
-             🎤 Mock Interview
+             🎤 {t('chat.mockInterview')}
            </button>
            <button 
              onClick={() => { setInput("What do I need to know about CNA license reciprocity if I move to a new state?"); sendMessage('search'); }}
              className="whitespace-nowrap px-3 py-1 bg-slate-800 text-blue-400 border border-slate-700 hover:bg-slate-700 text-xs font-bold rounded-full transition-colors cursor-pointer"
            >
-             🗺️ State Reciprocity
+             🗺️ {t('chat.reciprocity')}
            </button>
          </div>
 
@@ -133,7 +135,8 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
             <input 
               type="text" 
               className="flex-1 bg-slate-800 text-white p-2 border border-slate-700 font-sans focus:outline-none focus:border-amber-400"
-              placeholder="Ask anything..."
+              placeholder={t('assistant.placeholder')}
+              aria-label={t('assistant.placeholder')}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && sendMessage('chat')}
@@ -144,13 +147,13 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
          </div>
          <div className="flex gap-2 text-xs font-mono w-full items-stretch">
             <button onClick={() => sendMessage('search')} className="flex-1 bg-slate-800 text-blue-400 hover:bg-slate-700 p-1.5 flex justify-center items-center gap-1 border border-slate-700 cursor-pointer" title="Use Google Search Grounding">
-              <Search className="w-3.5 h-3.5" /> Search
+              <Search className="w-3.5 h-3.5" /> {t('chat.search')}
             </button>
             <button onClick={() => sendMessage('maps')} className="flex-1 bg-slate-800 text-emerald-400 hover:bg-slate-700 p-1.5 flex justify-center items-center gap-1 border border-slate-700 cursor-pointer" title="Use Google Maps Grounding">
-              <MapPin className="w-3.5 h-3.5" /> Maps
+              <MapPin className="w-3.5 h-3.5" /> {t('chat.maps')}
             </button>
             <button onClick={() => sendMessage('lite')} className="flex-1 bg-slate-800 text-yellow-400 hover:bg-slate-700 p-1.5 flex justify-center items-center gap-1 border border-slate-700 cursor-pointer" title="Use Flash Lite for fast responses">
-              <Zap className="w-3.5 h-3.5" /> Fast
+              <Zap className="w-3.5 h-3.5" /> {t('chat.fast')}
             </button>
          </div>
       </div>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CNA Career Playbook">
+  <rect width="512" height="512" rx="96" fill="#0f172a"/>
+  <!-- amber heart -->
+  <path d="M256 392c-8 0-16-3-22-9l-96-93c-34-33-34-87 0-120 30-29 78-29 108 1l10 10 10-10c30-30 78-30 108-1 34 33 34 87 0 120l-96 93c-6 6-14 9-22 9z" fill="#f59e0b"/>
+  <!-- ECG pulse line across the heart -->
+  <path d="M150 252h54l20-44 28 92 22-58 14 10h74" fill="none" stroke="#0f172a" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

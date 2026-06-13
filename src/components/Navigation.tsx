@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { usePlaybook } from "../lib/resumeState";
+import { LanguageToggle } from "../lib/i18n";
 import { Heart, Menu, X, Landmark, Briefcase, FileLineChart, ShieldAlert, Sparkles, HelpCircle } from "lucide-react";
 
 export default function Navigation() {
@@ -38,8 +39,11 @@ export default function Navigation() {
             aria-label="CNA Career Playbook Home"
           >
             <Heart className="w-5 h-5 text-rose-500 fill-rose-500 group-hover:scale-110 transition-transform" />
-            <span className="font-display font-black text-xs md:text-sm text-white tracking-widest uppercase">
-              CNA CAREER PLAYBOOK
+            <span className="hidden sm:inline font-display font-black text-[10px] md:text-xs text-white tracking-wide uppercase leading-tight">
+              Certified Nursing Assistant (CNA) Career Playbook
+            </span>
+            <span className="sm:hidden font-display font-black text-xs text-white tracking-widest uppercase">
+              CNA Career Playbook
             </span>
           </button>
         </div>
@@ -64,10 +68,12 @@ export default function Navigation() {
               </button>
             );
           })}
+          <LanguageToggle className="ml-2 px-3 py-1.5 font-mono text-[11px] font-extrabold uppercase tracking-widest text-slate-300 hover:text-white border-b-2 border-transparent hover:border-slate-500 transition-all cursor-pointer focus:ring-2 focus:ring-yellow-400 focus:bg-slate-900 outline-none" />
         </div>
 
         {/* Mobile Hamburger Toggle */}
         <div className="flex lg:hidden items-center gap-2">
+          <LanguageToggle className="px-2.5 py-1.5 font-mono text-[11px] font-extrabold uppercase tracking-widest text-slate-200 bg-slate-900 border border-slate-800 hover:text-white hover:border-slate-700 outline-none focus:ring-2 focus:ring-yellow-400 cursor-pointer" />
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="p-1.5 text-slate-200 hover:text-white bg-slate-900 border border-slate-800 hover:border-slate-700 outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-1 focus:ring-offset-slate-950"
@@ -95,7 +101,7 @@ export default function Navigation() {
                 <div className="flex items-center gap-2">
                   <Heart className="w-4 h-4 text-rose-500 fill-rose-500 animate-pulse" />
                   <span className="font-display font-black text-xs text-white uppercase tracking-widest">
-                    CNA Playbook Menu
+                    CNA Career Playbook
                   </span>
                 </div>
                 <button

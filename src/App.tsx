@@ -69,7 +69,7 @@ function AppContent() {
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div>
             <h4 className="font-display font-black text-xs text-white tracking-widest uppercase mb-2 flex items-center gap-1.5">
-              <Heart className="w-4 h-4 text-rose-500 fill-rose-500" /> CLINICAL CNA CAREER PLAYBOOK
+              <Heart className="w-4 h-4 text-rose-500 fill-rose-500" /> Certified Nursing Assistant (CNA) Career Playbook
             </h4>
             <span className="font-mono text-[9px] text-[#f59e0b] uppercase tracking-widest block mb-3 font-bold">
               Georgia Healthcare Onboarding & Compliance Engine · Edition 2026

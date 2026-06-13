@@ -1,0 +1,28 @@
+{
+  "name": "Certified Nursing Assistant (CNA) Career Playbook",
+  "short_name": "CNA Playbook",
+  "description": "A trauma-informed career companion for Certified Nursing Assistants: certification, resumes, interviews, wages, and burnout support.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#efedea",
+  "theme_color": "#0f172a",
+  "categories": ["medical", "education", "productivity"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

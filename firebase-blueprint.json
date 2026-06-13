@@ -1,0 +1,23 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with their specific playbook data.",
+      "type": "object",
+      "properties": {
+        "savedSector": { "type": "string" },
+        "savedFocus": { "type": "string" },
+        "playbookOverrides": { "type": "string" },
+        "updatedAt": { "type": "number" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["updatedAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Profile data for each user."
+    }
+  }
+}

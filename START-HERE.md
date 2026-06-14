@@ -91,6 +91,8 @@ gcloud run deploy nursing-assistant-career-playbook \
 ## 5) A few things only YOU can do (cloud console — 15 min)
 
 These finish the security story and can't be done from code:
+- [ ] **Turn on the retention loop (accounts + reminders):** in the Firebase console → **Authentication → Sign-in method**, enable **Google** and **Anonymous**; under **Settings → Authorized domains**, add your Cloud Run domain. Then deploy the updated rules: `firebase deploy --only firestore:rules`. *(Until then, the progress dashboard still works locally per-device; sign-in just won't sync across devices.)*
+- [ ] *(Optional)* **Background push when the app is closed:** in Firebase console → **Project settings → Cloud Messaging → Web Push certificates**, generate a key and set it as `VITE_FIREBASE_VAPID_KEY`. Local reminders work without this.
 - [ ] **Restrict the Firebase web API key** (Google Cloud Console → Credentials → HTTP referrer + API restrictions) and turn on **Firebase App Check**. The key in `firebase-applet-config.json` is a public client ID by design, but restricting it blocks abuse.
 - [ ] **Set a budget alert** on the project so AI usage can't surprise you.
 - [ ] **Confirm the `GEMINI_API_KEY`** is stored as a **Secret** (not a plain env var) and rotate it if it was ever shared.

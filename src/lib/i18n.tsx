@@ -44,6 +44,18 @@ const EN: Dict = {
   "chat.fast": "Fast",
   "crisis.line": "988 Suicide & Crisis Lifeline",
   "crisis.body": "If you're exhausted, hopeless, or in crisis, you can call or text 988 — 24/7, free, and confidential. You matter.",
+  "account.signIn": "Sign in",
+  "account.google": "Continue with Google",
+  "account.guest": "Continue as guest",
+  "account.signOut": "Sign out",
+  "account.signInToSave": "Sign in to save your progress across devices.",
+  "account.synced": "Synced to your account",
+  "account.savedLocal": "Saved on this device",
+  "reminders.enable": "Turn on reminders",
+  "reminders.on": "Reminders on",
+  "reminders.blocked": "Reminders blocked in browser settings",
+  "progress.title": "Your progress",
+  "progress.signedInAs": "Signed in",
 };
 
 const ES: Dict = {
@@ -69,6 +81,18 @@ const ES: Dict = {
   "chat.fast": "Rápido",
   "crisis.line": "988 Línea de Prevención del Suicidio y Crisis",
   "crisis.body": "Si te sientes agotada/o, sin esperanza o en crisis, puedes llamar o enviar un mensaje al 988 — 24/7, gratis y confidencial. Tú importas.",
+  "account.signIn": "Iniciar sesión",
+  "account.google": "Continuar con Google",
+  "account.guest": "Continuar como invitada/o",
+  "account.signOut": "Cerrar sesión",
+  "account.signInToSave": "Inicia sesión para guardar tu progreso en todos tus dispositivos.",
+  "account.synced": "Sincronizado con tu cuenta",
+  "account.savedLocal": "Guardado en este dispositivo",
+  "reminders.enable": "Activar recordatorios",
+  "reminders.on": "Recordatorios activados",
+  "reminders.blocked": "Recordatorios bloqueados en el navegador",
+  "progress.title": "Tu progreso",
+  "progress.signedInAs": "Sesión iniciada",
 };
 
 const DICTS: Record<Lang, Dict> = { en: EN, es: ES };

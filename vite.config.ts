@@ -18,5 +18,18 @@ export default defineConfig(() => {
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
+    build: {
+      chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        output: {
+          // Split heavy vendors into separately-cached chunks so adding
+          // Firebase (auth + firestore) doesn't bloat the main app chunk.
+          manualChunks(id: string) {
+            if (id.includes('/firebase/') || id.includes('/@firebase/')) return 'firebase';
+            if (id.includes('/node_modules/react') || id.includes('/react-dom/')) return 'react-vendor';
+          },
+        },
+      },
+    },
   };
 });

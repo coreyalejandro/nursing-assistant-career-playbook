@@ -1,6 +1,18 @@
 # CHANGES — Hardening Pass (technical)
 
-Build status: `tsc --noEmit` ✅ · `vite build` ✅ · `esbuild` server bundle ✅ · live server smoke test ✅
+Build status: `tsc --noEmit` ✅ · `vite build` ✅ (code-split: app / react-vendor / firebase) · `esbuild` server bundle ✅ · live server smoke test ✅
+
+## Retention loop (sign-in · cross-device persistence · progress dashboard · reminders) — LIVE
+- **`src/lib/userProfile.ts`** — `useUserProfile()` hook: Google + anonymous sign-in, loads/saves the `UserProfile` doc (owner-scoped Firestore), friendly auth errors. Extended schema: `renewalDate`, `progressJson`.
+- **`src/lib/notifications.ts`** — working local reminders (cert-renewal at 60/30/7/0 days + weekly check-in), de-duplicated via localStorage; FCM background-push hook (`enablePushIfConfigured`) that activates when `VITE_FIREBASE_VAPID_KEY` is set.
+- **`src/components/RetentionPanel.tsx`** — assembles it: signed-out nudge → Google/guest; persists to localStorage always and to Firestore when signed in (debounced); reminders toggle; sync-status badge. Mounted on the Home dashboard.
+- **`src/components/AccountMenu.tsx`** — compact sign-in / account control wired into the top nav (desktop + mobile).
+- **`src/components/ProgressTracker.tsx`** — now hydratable from saved state (`initialChecklist`), re-syncs when the profile loads.
+- **`public/sw.js`** — added `push` + `notificationclick` handlers (cache bumped to v2) for FCM background push.
+- **`firestore.rules` + `firebase-blueprint.json`** — allow `renewalDate` (string) and `progressJson` (string ≤ 8 KB).
+- **`vite.config.ts`** — `manualChunks` splits firebase + react into separately-cached vendor chunks (main app chunk back down to ~71 KB gzip).
+- Works with or without Firebase fully configured: signed-out users get a working, localStorage-backed dashboard; signing in upgrades to cross-device sync.
+- **Console prerequisites (one-time):** enable Google / Anonymous providers, add your authorized domain, and deploy `firestore.rules`. See START-HERE §5.
 
 ## New files
 - **`server/security.ts`** — dependency-free hardening: `securityHeaders()` (CSP, HSTS, nosniff, X-Frame-Options, Permissions-Policy), `createRateLimiter()` (in-memory fixed-window per IP), `createSessionQuota()` (per-session daily AI budget), `redactHighRiskPHI()` (strips SSN/card/MRN before the model), `scrubForLog()` + `safeLog/Warn/Error` (PII-redacting logging), `sanitizeClientError()` (no internal leakage), `TTLCache`, `getClientIp()` (X-Forwarded-For aware).

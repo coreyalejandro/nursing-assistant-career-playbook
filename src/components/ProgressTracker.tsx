@@ -12,16 +12,16 @@
  * passing a saved renewal date from the user's profile.
  * ---------------------------------------------------------------------------
  */
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { CalendarClock, CheckCircle2, Circle } from "lucide-react";
 
-interface ChecklistItem {
+export interface ChecklistItem {
   id: string;
   label: string;
   done: boolean;
 }
 
-const DEFAULT_CHECKLIST: ChecklistItem[] = [
+export const DEFAULT_CHECKLIST: ChecklistItem[] = [
   { id: "cert", label: "Confirm certification is active on the state registry", done: false },
   { id: "ceu", label: "Log continuing-education / in-service hours", done: false },
   { id: "resume", label: "Refresh resume with this quarter's metrics", done: false },
@@ -38,13 +38,21 @@ function daysUntil(dateStr: string): number | null {
 
 export default function ProgressTracker({
   initialRenewalDate = "",
+  initialChecklist,
   onChange,
 }: {
   initialRenewalDate?: string;
+  initialChecklist?: ChecklistItem[];
   onChange?: (state: { renewalDate: string; checklist: ChecklistItem[] }) => void;
 }) {
   const [renewalDate, setRenewalDate] = useState(initialRenewalDate);
-  const [checklist, setChecklist] = useState<ChecklistItem[]>(DEFAULT_CHECKLIST);
+  const [checklist, setChecklist] = useState<ChecklistItem[]>(initialChecklist && initialChecklist.length ? initialChecklist : DEFAULT_CHECKLIST);
+
+  // Re-hydrate when saved values arrive asynchronously (e.g., profile load).
+  useEffect(() => { setRenewalDate(initialRenewalDate); }, [initialRenewalDate]);
+  useEffect(() => {
+    if (initialChecklist && initialChecklist.length) setChecklist(initialChecklist);
+  }, [initialChecklist]);
 
   const remaining = useMemo(() => daysUntil(renewalDate), [renewalDate]);
   const completed = checklist.filter((c) => c.done).length;

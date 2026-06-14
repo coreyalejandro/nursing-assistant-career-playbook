@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { usePlaybook } from "../lib/resumeState";
+import RetentionPanel from "./RetentionPanel";
 import { Sparkles, Heart, ClipboardCheck, MessageSquare, Award, ArrowRight, Landmark, ThumbsUp, HelpCircle } from "lucide-react";
 
 export default function HomeDashboard() {
@@ -51,6 +52,9 @@ export default function HomeDashboard() {
           </button>
         </div>
       </div>
+
+      {/* Retention loop: account + progress dashboard + reminders */}
+      <RetentionPanel />
 
       {/* Georgia Stats Dashboard Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

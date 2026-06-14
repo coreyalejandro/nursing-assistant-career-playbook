@@ -8,6 +8,8 @@
         "savedSector": { "type": "string" },
         "savedFocus": { "type": "string" },
         "playbookOverrides": { "type": "string" },
+        "renewalDate": { "type": "string" },
+        "progressJson": { "type": "string" },
         "updatedAt": { "type": "number" },
         "createdAt": { "type": "number" }
       },

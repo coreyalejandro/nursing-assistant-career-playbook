@@ -43,16 +43,16 @@ function AppContent() {
       </main>
 
       {/* Adaptive Page Feedback Widget */}
-      <AdaptiveFeedback 
-        currentUrl={`https://cna-playbook.local${state.activeTab}`} 
-        currentViewMode={state.activeTab === '/' ? 'home' : state.activeTab.replace(/^\//, '')} 
+      <AdaptiveFeedback
+        currentUrl={`https://cna-playbook.local${state.activeTab}`}
+        currentViewMode={state.activeTab === '/' ? 'home' : state.activeTab.replace(/^\//, '')}
       />
 
       {/* Floating App Assistant Trigger & Modal Dialog */}
       {!isAssistantOpen && (
         <button
           onClick={() => setIsAssistantOpen(true)}
-          className="fixed bottom-6 right-6 z-40 bg-[#f59e0b] hover:bg-[#d97706] text-slate-950 p-3.5 rounded-full shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:shadow-[1px_1px_0px_0px_rgba(15,23,42,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all border-2 border-slate-950 flex items-center justify-center cursor-pointer group no-print"
+          className="fixed bottom-6 right-6 z-40 bg-[#f59e0b] hover:bg-[#d97706] text-slate-950 p-3.5 rounded-full shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:shadow-[1px_1px_0px_0px_rgba(15,23,42,1)] hover:translate-x-0.5 hover:translate-y-0.5 transition-all border-2 border-slate-950 flex items-center justify-center cursor-pointer group no-print"
           title="Open AI Career Assistant"
           id="assistant-trigger"
         >

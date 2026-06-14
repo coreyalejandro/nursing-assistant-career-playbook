@@ -68,7 +68,7 @@ export default function RecruiterDashboard() {
         const matchesStatus = statusFilter === "All" || c.registryStatus === statusFilter;
         return matchesSearch && matchesStatus;
       })
-      .map(c => 
+      .map(c =>
         `"${c.id}","${c.name}","${c.email}","${c.phone}",${c.experienceYears},"${c.registryStatus}","${c.certifiedSpecialties.join(' | ')}",${c.hireabilityScore},"${c.fallRateReduction}"`
       ).join('\n');
 
@@ -89,7 +89,7 @@ export default function RecruiterDashboard() {
   // Computed visual metrics
   const filteredCandidates = candidates.filter(cand => {
     const matchesSearch = cand.name.toLowerCase().includes(search.toLowerCase()) ||
-                          cand.certifiedSpecialties.some(s => s.toLowerCase().includes(search.toLowerCase()));
+      cand.certifiedSpecialties.some(s => s.toLowerCase().includes(search.toLowerCase()));
     const matchesStatus = statusFilter === "All" || cand.registryStatus === statusFilter;
     const matchesSpecialty = specialtyFilter === "All" || cand.certifiedSpecialties.includes(specialtyFilter);
 
@@ -111,7 +111,7 @@ export default function RecruiterDashboard() {
           </div>
           <button
             onClick={handleExportCsv}
-            className="self-start sm:self-center font-mono text-xs font-black uppercase tracking-wider text-slate-950 bg-slate-100 hover:bg-slate-200 px-4 py-2 flex items-center gap-1.5 border-2 border-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[1px] hover:shadow-none cursor-pointer transition-all shrink-0"
+            className="self-start sm:self-center font-mono text-xs font-black uppercase tracking-wider text-slate-950 bg-slate-100 hover:bg-slate-200 px-4 py-2 flex items-center gap-1.5 border-2 border-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-px hover:shadow-none cursor-pointer transition-all shrink-0"
           >
             <Download className="w-4 h-4" /> Export CSV List
           </button>
@@ -185,12 +185,11 @@ export default function RecruiterDashboard() {
                 <h4 className="font-display font-black text-slate-950 text-base uppercase tracking-tight">
                   {cand.name}
                 </h4>
-                
-                <span className={`px-2 py-0.5 font-mono text-[8.5px] font-bold border rounded-none uppercase ${
-                  cand.registryStatus === 'ACTIVE' 
-                    ? 'bg-emerald-150 text-emerald-900 border-emerald-300' 
+
+                <span className={`px-2 py-0.5 font-mono text-[8.5px] font-bold border rounded-none uppercase ${cand.registryStatus === 'ACTIVE'
+                    ? 'bg-emerald-150 text-emerald-900 border-emerald-300'
                     : 'bg-red-100 text-red-900 border-red-300'
-                }`}>
+                  }`}>
                   State Registry: {cand.registryStatus}
                 </span>
 
@@ -231,7 +230,7 @@ export default function RecruiterDashboard() {
                 <span className="block font-mono text-[8px] uppercase tracking-wider text-slate-400 font-black">Hireability Rating</span>
                 <span className="font-display text-2xl font-black text-yellow-400 select-none block md:mt-1">{cand.hireabilityScore}<span className="text-xs font-mono font-medium text-slate-400">/100</span></span>
               </div>
-              
+
               <div className="text-right md:text-center w-auto md:w-full">
                 <span className="inline-block bg-emerald-500 text-slate-950 text-[8px] font-mono font-black px-2 py-0.5 uppercase">
                   Highly Match

@@ -12,7 +12,7 @@ export default function ResumeBuilder({ playbookData, onUpdatePlaybook }: Resume
   const [competencies, setCompetencies] = useState(playbookData.resume.clinicalCompetencies.join(', '));
   const [safetyPoints, setSafetyPoints] = useState(playbookData.resume.mobilitySafety.join(', '));
   const [systems, setSystems] = useState(playbookData.resume.systemsAdmin.join(', '));
-  
+
   const [experiences, setExperiences] = useState(playbookData.resume.experiences);
   const [copiedText, setCopiedText] = useState(false);
   const [savedStatus, setSavedStatus] = useState(false);
@@ -242,7 +242,7 @@ ${exp.bullets.map(b => `- ${b.text}`).join('\n')}
                   <span className="font-bold text-xs uppercase text-slate-950">{exp.title} — {exp.company}</span>
                   <span className="font-mono text-[9px] text-slate-500 uppercase font-bold">{exp.dateRange}</span>
                 </div>
-                
+
                 {/* Underlining items */}
                 <div className="space-y-2">
                   {exp.bullets.map((bullet, bulletIdx) => (
@@ -267,7 +267,7 @@ ${exp.bullets.map(b => `- ${b.text}`).join('\n')}
         <div className="pt-3 flex justify-end">
           <button
             onClick={handleSaveChanges}
-            className="cursor-pointer font-mono text-xs font-black uppercase tracking-wider text-white bg-slate-900 hover:bg-slate-850 px-6 py-3.5 border-2 border-slate-900 shadow-[3px_3px_0px_0px_rgba(5,150,105,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center gap-1.5"
+            className="cursor-pointer font-mono text-xs font-black uppercase tracking-wider text-white bg-slate-900 hover:bg-slate-850 px-6 py-3.5 border-2 border-slate-900 shadow-[3px_3px_0px_0px_rgba(5,150,105,1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all flex items-center gap-1.5"
           >
             <Save className="w-4 h-4 text-emerald-400" />
             {savedStatus ? "Changes Merged & Cached!" : "Save and Sync Resume"}

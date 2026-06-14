@@ -40,10 +40,10 @@ export default function OptimizationConsole({
       setSystemLogs((prev) => [
         ...prev,
         prev.length === 3 ? "Matching words to hospital job filters..." :
-        prev.length === 4 ? "Rewriting job duties to highlight exact safety numbers..." :
-        prev.length === 5 ? "Updating warehouse numbers to show medical supply skill..." :
-        prev.length === 6 ? "Making stories and text easy to read for recruiters..." :
-        "Running final check against hospital expectations..."
+          prev.length === 4 ? "Rewriting job duties to highlight exact safety numbers..." :
+            prev.length === 5 ? "Updating warehouse numbers to show medical supply skill..." :
+              prev.length === 6 ? "Making stories and text easy to read for recruiters..." :
+                "Running final check against hospital expectations..."
       ]);
     }, 400);
 
@@ -110,11 +110,10 @@ export default function OptimizationConsole({
                 <button
                   key={sec.id}
                   onClick={() => setSector(sec.id as TargetSector)}
-                  className={`flex items-center gap-3 px-4 py-3 border-2 transition-all cursor-pointer ${
-                    sector === sec.id
-                      ? "bg-indigo-50 border-indigo-600 text-slate-900 shadow-[3px_3px_0px_0px_rgba(79,70,229,1)] font-bold"
-                      : "bg-white border-slate-300 text-slate-600 hover:border-slate-800 hover:text-slate-950"
-                  }`}
+                  className={`flex items-center gap-3 px-4 py-3 border-2 transition-all cursor-pointer ${sector === sec.id
+                    ? "bg-indigo-50 border-indigo-600 text-slate-900 shadow-[3px_3px_0px_0px_rgba(79,70,229,1)] font-bold"
+                    : "bg-white border-slate-300 text-slate-600 hover:border-slate-800 hover:text-slate-950"
+                    }`}
                 >
                   <span className="text-xl">{sec.icon}</span>
                   <div className="leading-tight">
@@ -162,7 +161,7 @@ export default function OptimizationConsole({
           <button
             onClick={handleRunOptimization}
             disabled={isOptimizing}
-            className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-sans font-black text-xs uppercase tracking-widest py-4 border-2 border-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] flex items-center justify-center gap-2 cursor-pointer transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]"
+            className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-sans font-black text-xs uppercase tracking-widest py-4 border-2 border-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] hover:translate-x-px hover:translate-y-px hover:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] flex items-center justify-center gap-2 cursor-pointer transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]"
           >
             {isOptimizing ? (
               <>
@@ -191,17 +190,16 @@ export default function OptimizationConsole({
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
             </div>
           </div>
-          <div className="flex-grow bg-slate-950 p-4 border-x-2 border-b-2 border-slate-900 font-mono text-[10px] text-slate-300 leading-normal overflow-y-auto max-h-[240px] shadow-inner">
+          <div className="grow bg-slate-950 p-4 border-x-2 border-b-2 border-slate-900 font-mono text-[10px] text-slate-300 leading-normal overflow-y-auto max-h-[240px] shadow-inner">
             {systemLogs.map((item, idx) => (
               <div
                 key={idx}
-                className={`py-0.5 border-b border-slate-900/60 last:border-0 ${
-                  item.startsWith("✓") ? "text-emerald-400" :
+                className={`py-0.5 border-b border-slate-900/60 last:border-0 ${item.startsWith("✓") ? "text-emerald-400" :
                   item.startsWith("❌") ? "text-rose-400" :
-                  item.startsWith("Analyzing") || item.startsWith("Restructuring") || item.startsWith("Sanitizing")
-                    ? "text-indigo-300"
-                    : "text-slate-300"
-                }`}
+                    item.startsWith("Analyzing") || item.startsWith("Restructuring") || item.startsWith("Sanitizing")
+                      ? "text-indigo-300"
+                      : "text-slate-300"
+                  }`}
               >
                 <span className="text-slate-600 select-none mr-2">[{1000 + idx}]</span>
                 {item}

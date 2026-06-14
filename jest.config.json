@@ -1,0 +1,18 @@
+{
+  "testEnvironment": "node",
+  "rootDir": ".",
+  "roots": ["server", "src"],
+  "testMatch": ["**/*.test.ts", "**/*.test.tsx"],
+  "testPathIgnorePatterns": ["/node_modules/", "\\.integration\\.test\\.ts$"],
+  "transform": {
+    "^.+\\.(ts|tsx)$": ["ts-jest", { "tsconfig": "tsconfig.test.json" }]
+  },
+  "moduleFileExtensions": ["ts", "tsx", "js", "json", "node"],
+  "collectCoverageFrom": [
+    "server/defense/**/*.ts",
+    "server/hipaa/rbac.ts",
+    "server/llm/FallbackProvider.ts",
+    "src/lib/enterpriseRuntime.ts"
+  ],
+  "coveragePathIgnorePatterns": ["/node_modules/", "\\.test\\.ts$", "\\.integration\\.test\\.ts$"]
+}

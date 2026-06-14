@@ -1,0 +1,19 @@
+{
+  "mockExecutionEnvironment": true,
+  "note": "CI fixture. This verifies that enterprise CONTROL WIRING is present so the pipeline can run offline. It is NOT evidence of HIPAA compliance and must never be presented as such.",
+  "wiredControls": {
+    "auditLogger": true,
+    "rbac": true,
+    "tenantIsolationRules": true,
+    "phiScrubbing": true,
+    "outputValidation": true,
+    "inputFilter": true
+  },
+  "humanOrInfraRequired": {
+    "baaSigned": "PENDING — a Business Associate Agreement is a signed legal contract; cannot be satisfied in code.",
+    "cmekConfigured": "PENDING — customer-managed encryption keys are real cloud infrastructure.",
+    "clinicalBoundaryReview": "PENDING — requires sign-off from a licensed clinician.",
+    "thirdPartyRiskAssessment": "PENDING — requires an external HIPAA/SOC 2 auditor.",
+    "penetrationTest": "PENDING — requires an external security firm."
+  }
+}

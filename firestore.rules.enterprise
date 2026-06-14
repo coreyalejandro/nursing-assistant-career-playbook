@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() { return request.auth != null; }
+    function getTenantId() { return request.auth.token.tenantId; }
+    function belongsToTenant(tenantId) { return isAuthenticated() && getTenantId() == tenantId; }
+    function isManager() { return request.auth.token.role == 'manager' || request.auth.token.role == 'org_admin'; }
+    function isOrgAdmin() { return request.auth.token.role == 'org_admin'; }
+
+    // Most specific first. Append-only audit log.
+    match /tenant/{tenantId}/audit/{auditId} {
+      allow create: if belongsToTenant(tenantId);
+      allow read: if belongsToTenant(tenantId) && isOrgAdmin();
+      allow update, delete: if false;
+    }
+
+    // Cohort aggregates: managers read; server writes only.
+    match /tenant/{tenantId}/aggregates/{aggregateId} {
+      allow read: if belongsToTenant(tenantId) && isManager();
+      allow write: if false;
+    }
+
+    // Per-user docs: the owner; org admins may read (never managers).
+    match /tenant/{tenantId}/users/{userId} {
+      allow read, write: if belongsToTenant(tenantId) && request.auth.uid == userId;
+      allow read: if belongsToTenant(tenantId) && isOrgAdmin();
+    }
+
+    // Wildcard fallback explicitly excludes the reserved collections above to
+    // prevent a cascading privilege-elevation loop through the wildcard.
+    match /tenant/{tenantId}/{collection}/{document=**} {
+      allow read, write: if belongsToTenant(tenantId)
+        && collection != 'audit'
+        && collection != 'aggregates'
+        && collection != 'users';
+    }
+
+    // Consumer (non-tenant) users.
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}

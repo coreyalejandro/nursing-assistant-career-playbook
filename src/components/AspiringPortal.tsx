@@ -10,7 +10,7 @@ const STATE_INFO_LIST = [
   { code: "NY", name: "New York", hours: 100, vendor: "Prometric", examUrl: "https://www.prometric.com/nurseaide/ny" },
   { code: "AL", name: "Alabama", hours: 75, vendor: "Prometric", examUrl: "https://www.prometric.com/nurseaide/al" },
   { code: "AK", name: "Alaska", hours: 140, vendor: "Credentia", examUrl: "https://credentia.com/test-takers/ak" },
-  { code: "AZ", name: "Arizona", hours: 120, vendor: "D&S Headmaster", examUrl: "https://az.tmutest.com" },
+  { code: "AZ", name: "Arizona", hours: 120, vendor: "D&S Headmaster", examUrl: "http://www.hdmaster.com" },
   { code: "AR", name: "Arkansas", hours: 90, vendor: "Prometric", examUrl: "https://www.prometric.com/nurseaide/ar" },
   { code: "CO", name: "Colorado", hours: 75, vendor: "Pearson VUE", examUrl: "https://home.pearsonvue.com/co/cnas" },
   { code: "CT", name: "Connecticut", hours: 100, vendor: "Prometric", examUrl: "https://www.prometric.com/nurseaide/ct" },
@@ -26,33 +26,33 @@ const STATE_INFO_LIST = [
   { code: "LA", name: "Louisiana", hours: 80, vendor: "Prometric", examUrl: "https://www.prometric.com/nurseaide/la" },
   { code: "ME", name: "Maine", hours: 180, vendor: "Maine State Registry", examUrl: "https://www.maine.gov" },
   { code: "MD", name: "Maryland", hours: 100, vendor: "Board of Nursing", examUrl: "https://mbon.maryland.gov" },
-  { code: "MA", name: "Massachusetts", hours: 100, vendor: "D&S Headmaster", examUrl: "https://ma.tmutest.com" },
+  { code: "MA", name: "Massachusetts", hours: 100, vendor: "D&S Headmaster", examUrl: "http://www.hdmaster.com" },
   { code: "MI", name: "Michigan", hours: 75, vendor: "Prometric", examUrl: "https://www.prometric.com/nurseaide/mi" },
   { code: "MN", name: "Minnesota", hours: 75, vendor: "Minnesota State Univ", examUrl: "https://www.minnstate.edu" },
   { code: "MS", name: "Mississippi", hours: 75, vendor: "Credentia", examUrl: "https://credentia.com/test-takers/ms" },
   { code: "MO", name: "Missouri", hours: 175, vendor: "DHSS", examUrl: "https://health.mo.gov" },
-  { code: "MT", name: "Montana", hours: 75, vendor: "D&S Headmaster", examUrl: "https://mt.tmutest.com" },
+  { code: "MT", name: "Montana", hours: 75, vendor: "D&S Headmaster", examUrl: "http://www.hdmaster.com" },
   { code: "NE", name: "Nebraska", hours: 75, vendor: "DHHS Registry", examUrl: "https://dhhs.ne.gov" },
   { code: "NV", name: "Nevada", hours: 75, vendor: "Board of Nursing", examUrl: "https://nevadanursingboard.org" },
   { code: "NH", name: "New Hampshire", hours: 100, vendor: "LNA Registry", examUrl: "https://www.oplc.nh.gov" },
   { code: "NJ", name: "New Jersey", hours: 90, vendor: "PSI Testing", examUrl: "https://www.psiexams.com" },
   { code: "NM", name: "New Mexico", hours: 75, vendor: "Prometric", examUrl: "https://www.prometric.com/nurseaide/nm" },
   { code: "NC", name: "North Carolina", hours: 75, vendor: "Credentia", examUrl: "https://credentia.com/test-takers/nc" },
-  { code: "ND", name: "North Dakota", hours: 75, vendor: "D&S Headmaster", examUrl: "https://nd.tmutest.com" },
-  { code: "OH", name: "Ohio", hours: 75, vendor: "D&S Headmaster", examUrl: "https://oh.tmutest.com" },
+  { code: "ND", name: "North Dakota", hours: 75, vendor: "D&S Headmaster", examUrl: "http://www.hdmaster.com" },
+  { code: "OH", name: "Ohio", hours: 75, vendor: "D&S Headmaster", examUrl: "http://www.hdmaster.com/testing/ohio" },
   { code: "OK", name: "Oklahoma", hours: 120, vendor: "Health Department Registry", examUrl: "https://oklahoma.gov" },
   { code: "OR", name: "Oregon", hours: 150, vendor: "OSBN Board", examUrl: "https://www.oregon.gov/osbn" },
   { code: "PA", name: "Pennsylvania", hours: 80, vendor: "Credentia", examUrl: "https://credentia.com/test-takers/pa" },
   { code: "RI", name: "Rhode Island", hours: 100, vendor: "Board of Health", examUrl: "https://health.ri.gov" },
   { code: "SC", name: "South Carolina", hours: 80, vendor: "Credentia", examUrl: "https://credentia.com/test-takers/sc" },
-  { code: "SD", name: "South Dakota", hours: 75, vendor: "D&S Headmaster", examUrl: "https://sd.tmutest.com" },
-  { code: "TN", name: "Tennessee", hours: 75, vendor: "D&S Headmaster", examUrl: "https://tn.tmutest.com" },
+  { code: "SD", name: "South Dakota", hours: 75, vendor: "D&S Headmaster", examUrl: "http://www.hdmaster.com" },
+  { code: "TN", name: "Tennessee", hours: 75, vendor: "D&S Headmaster", examUrl: "http://www.hdmaster.com" },
   { code: "UT", name: "Utah", hours: 80, vendor: "UNAR Board", examUrl: "https://www.utahbase.org" },
   { code: "VT", name: "Vermont", hours: 80, vendor: "Board of Nursing", examUrl: "https://sos.vermont.gov" },
   { code: "VA", name: "Virginia", hours: 120, vendor: "Credentia", examUrl: "https://credentia.com/test-takers/va" },
   { code: "WA", name: "Washington", hours: 85, vendor: "DOH Registry", examUrl: "https://www.doh.wa.gov" },
   { code: "WV", name: "West Virginia", hours: 120, vendor: "Professional Credential Services", examUrl: "https://www.pcshq.com" },
-  { code: "WI", name: "Wisconsin", hours: 120, vendor: "D&S Headmaster", examUrl: "https://wi.tmutest.com" },
+  { code: "WI", name: "Wisconsin", hours: 120, vendor: "D&S Headmaster", examUrl: "http://www.hdmaster.com" },
   { code: "WY", name: "Wyoming", hours: 75, vendor: "Board of Nursing", examUrl: "https://wsbn.wyo.gov" }
 ];
 
@@ -272,13 +272,13 @@ export default function AspiringPortal() {
         nearestProgram: nearestFallback,
         planSteps: path === "full_speed"
           ? [
-            `Enroll in Approved Program: Join ${nearestFallback.name} (${selectedState.hours} approved curriculum hours).`,
-            `Accumulate Hours: Complete state background registry check and clinical labs.`,
-            `Pass Cert Exams: Sit state ${selectedState.vendor} examination.`
-          ]
+              `Enroll in Approved Program: Join ${nearestFallback.name} (${selectedState.hours} approved curriculum hours).`,
+              `Accumulate Hours: Complete state background registry check and clinical labs.`,
+              `Pass Cert Exams: Sit state ${selectedState.vendor} examination.`
+            ]
           : path === "cautious"
-            ? ["Sample shadowing clinics online.", "Attend healthcare career informational seminars."]
-            : ["Explore Medical Representative/Reception pathways.", "Examine administrative medical records billing training."],
+          ? ["Sample shadowing clinics online.", "Attend healthcare career informational seminars."]
+          : ["Explore Medical Representative/Reception pathways.", "Examine administrative medical records billing training."],
         examVendor: selectedState.vendor,
         examLink: selectedState.examUrl,
         fundingLinks: [
@@ -322,7 +322,7 @@ export default function AspiringPortal() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[9px] font-black text-slate-450 uppercase">Select State:</span>
+            <span className="font-mono text-[9px] font-black text-slate-450 uppercase uppercase">Select State:</span>
             <select
               value={selectedState.code}
               onChange={(e) => handleStateChangeRequest(e.target.value)}
@@ -365,10 +365,11 @@ export default function AspiringPortal() {
                 return (
                   <label
                     key={step.id}
-                    className={`flex items-start gap-3 p-3 border-2 transition-colors cursor-pointer rounded-none bg-white ${isChecked
+                    className={`flex items-start gap-3 p-3 border-2 transition-colors cursor-pointer rounded-none bg-white ${
+                      isChecked
                         ? "border-emerald-500 bg-emerald-50/20"
                         : "border-slate-300 hover:border-slate-900"
-                      }`}
+                    }`}
                   >
                     <input
                       type="checkbox"
@@ -430,8 +431,7 @@ export default function AspiringPortal() {
                     Under WIOA legislation, you may transition tuition completely for state nursing certificates using local workforce boards:
                   </p>
                   <div className="space-y-1">
-                    {/* Fixed crash condition with optional chaining since fundingLinks is omitted in state objects */}
-                    {selectedState.fundingLinks?.map((flink: any, idx: number) => (
+                    {selectedState.fundingLinks.map((flink, idx) => (
                       <a
                         key={idx}
                         href={flink.url}
@@ -578,7 +578,7 @@ export default function AspiringPortal() {
             </p>
             <button
               onClick={() => { setQuizStarted(true); setCurrentQIndex(0); }}
-              className="font-mono text-xs font-black uppercase text-white bg-indigo-650 hover:bg-slate-950 border-2 border-slate-950 px-6 py-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-px cursor-pointer transition-colors"
+              className="font-mono text-xs font-black uppercase text-white bg-indigo-650 hover:bg-slate-950 border-2 border-slate-950 px-6 py-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-[1px] cursor-pointer transition-colors"
             >
               Start Clinical Fit Assessment →
             </button>
@@ -609,13 +609,15 @@ export default function AspiringPortal() {
                       key={idx}
                       onClick={() => handleAnswerSelect(idx, option.score)}
                       type="button"
-                      className={`w-full text-left p-3 border-2 font-semibold text-xs leading-snug transition-colors rounded-none flex items-center gap-3 cursor-pointer ${isSelected
+                      className={`w-full text-left p-3 border-2 font-semibold text-xs leading-snug transition-colors rounded-none flex items-center gap-3 cursor-pointer ${
+                        isSelected
                           ? "border-indigo-600 bg-indigo-50/20 text-indigo-950 font-black"
                           : "border-slate-300 hover:border-slate-900 bg-white hover:bg-slate-50 text-slate-800"
-                        }`}
+                      }`}
                     >
-                      <span className={`w-5 h-5 flex items-center justify-center border-2 rounded-none font-mono text-[10px] ${isSelected ? "border-indigo-600 bg-indigo-600 text-white" : "border-slate-400 bg-slate-50"
-                        }`}>
+                      <span className={`w-5 h-5 flex items-center justify-center border-2 rounded-none font-mono text-[10px] ${
+                        isSelected ? "border-indigo-600 bg-indigo-600 text-white" : "border-slate-400 bg-slate-50"
+                      }`}>
                         {idx + 1}
                       </span>
                       <span>{option.text}</span>
@@ -638,7 +640,7 @@ export default function AspiringPortal() {
               {currentQIndex < QUIZ_QUESTIONS.length - 1 ? (
                 <button
                   disabled={selectedAnswers[currentQIndex] === undefined}
-                  onClick={currentQIndex === QUIZ_QUESTIONS.length - 1 ? undefined : () => setCurrentQIndex(prev => prev + 1)}
+                  onClick={() => setCurrentQIndex(prev => prev + 1)}
                   className="font-mono text-[10px] font-bold uppercase text-white bg-slate-900 hover:bg-slate-800 px-4 py-1.5 disabled:opacity-50 cursor-pointer"
                 >
                   Next Question →
@@ -676,12 +678,13 @@ export default function AspiringPortal() {
                   </div>
                 </div>
 
-                <span className={`px-2 py-1 font-mono text-[10px] font-black uppercase tracking-widest border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${quizResult.path === "full_speed"
+                <span className={`px-2 py-1 font-mono text-[10px] font-black uppercase tracking-widest border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                  quizResult.path === "full_speed"
                     ? "bg-emerald-500 text-slate-950"
                     : quizResult.path === "cautious"
-                      ? "bg-amber-400 text-slate-950"
-                      : "bg-indigo-300 text-indigo-950"
-                  }`}>
+                    ? "bg-amber-400 text-slate-950"
+                    : "bg-indigo-300 text-indigo-950"
+                }`}>
                   {quizResult.path === "full_speed" ? "⚡ FULL_SPEED ACCEL" : quizResult.path === "cautious" ? "⚠ CAUTIOUS EXPLORER" : "✦ SEGMENT RETARGET"}
                 </span>
               </div>
@@ -751,10 +754,11 @@ export default function AspiringPortal() {
               <button
                 key={clip.id}
                 onClick={() => handleClipSelect(clip)}
-                className={`w-full text-left p-3 border-2 transition-colors cursor-pointer rounded-none block space-y-1 ${activeClip.id === clip.id
+                className={`w-full text-left p-3 border-2 transition-colors cursor-pointer rounded-none block space-y-1 ${
+                  activeClip.id === clip.id
                     ? "border-indigo-600 bg-indigo-50/20"
                     : "border-slate-350 bg-white hover:border-slate-900"
-                  }`}
+                }`}
               >
                 <div className="flex justify-between items-start gap-1">
                   <span className="font-display font-black text-xs uppercase leading-snug text-slate-950 block">

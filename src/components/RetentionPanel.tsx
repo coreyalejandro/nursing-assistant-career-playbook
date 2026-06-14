@@ -58,7 +58,6 @@ export default function RetentionPanel() {
   useEffect(() => {
     recordVisit();
     if (currentPermission() === "granted") void runReminderCheck({ renewalDate: seed?.renewalDate });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // When the signed-in profile loads, prefer the cloud copy.

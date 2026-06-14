@@ -2,6 +2,23 @@
 
 Build status: `tsc --noEmit` ✅ · `vite build` ✅ (code-split: app / react-vendor / firebase) · `esbuild` server bundle ✅ · live server smoke test ✅
 
+## Phase 1 & 2 — defense layer, enterprise architecture, and CI gate (`npm run test:ci` ✅ exit 0)
+Pipeline: `typecheck` (0 errors) · `lint` eslint `--max-warnings=0` (0 warnings) · `test:unit` (29 tests; 100% stmts/funcs/lines, 95% branches on the new modules; 80% gate) · `test:integration` (5) · `test:security` (15 attacks blocked, 0 false positives across 8 CNA queries) · `test:hipaa` (honest wiring gate) · `test:backup` (audit-chain verify + tamper detection).
+
+New `server/` modules: `defense/inputFilter.ts` (3-layer, workplace-context-aware injection filter), `defense/outputValidator.ts` (system-fragment + PII egress validator), `llm/LLMProvider.ts` + `llm/FallbackProvider.ts` (Firestore-backed circuit breaker, leak-free timeout), `hipaa/auditLogger.ts` (hash-chained; injectable store — Firestore+GCS for prod, in-memory for CI), `hipaa/rbac.ts`, `monitoring/metrics.ts` (prom-client), `enterprise/sso.ts` (injected-admin dead-gate scaffold). Plus `firestore.rules.enterprise` (multi-tenant, append-only audit) and `src/lib/enterpriseRuntime.ts` (tenant/tier claims).
+
+Tooling: jest (+ ts-jest) unit & integration configs, `tsconfig.test.json`, eslint flat config (typescript-eslint), 7 new `test:*` scripts, three `tsx` probe scripts.
+
+**Honest deviations from the supplied manifest** (made so CI passes *truthfully*):
+- `inputFilter` EXACT patterns were anchored (`/^…$/`) and let real attacks (with trailing text) through. Rebuilt as de-anchored layered detection (structural / high-signal / context-gated) → blocks all 15 vectors, allows all 8 legitimate CNA queries.
+- `outputValidator` shipped a regex literal split across two lines (syntax error) → fixed.
+- `auditLogger` used `import { crypto } from 'crypto'` (no such named export) and a `(global as any).getFirestore()` landmine → fixed to `node:crypto` + an injectable store, so the chain is unit-testable without live infra.
+- `FallbackProvider.executeWithTimeout` now clears its timer (no leaked handles).
+- Probe scripts run via `tsx` (already a dependency, ESM-clean) instead of `ts-node`, which fails in this `type: module` project without an ESM loader.
+- `mockConfig.json` no longer asserts `baaSigned: true`. The HIPAA gate verifies control **wiring** only, prints "NOT compliance evidence," and lists the human/legal/infra controls still required — it never claims a BAA is signed.
+
+Added deps — dev: jest, ts-jest, @types/jest, ts-node, eslint, typescript-eslint, @eslint/js · server-only (not in client bundle): prom-client, firebase-admin, @google-cloud/storage.
+
 ## Retention loop (sign-in · cross-device persistence · progress dashboard · reminders) — LIVE
 - **`src/lib/userProfile.ts`** — `useUserProfile()` hook: Google + anonymous sign-in, loads/saves the `UserProfile` doc (owner-scoped Firestore), friendly auth errors. Extended schema: `renewalDate`, `progressJson`.
 - **`src/lib/notifications.ts`** — working local reminders (cert-renewal at 60/30/7/0 days + weekly check-in), de-duplicated via localStorage; FCM background-push hook (`enablePushIfConfigured`) that activates when `VITE_FIREBASE_VAPID_KEY` is set.

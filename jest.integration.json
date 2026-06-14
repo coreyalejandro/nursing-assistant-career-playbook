@@ -1,0 +1,11 @@
+{
+  "testEnvironment": "node",
+  "rootDir": ".",
+  "roots": ["server", "src"],
+  "testMatch": ["**/*.integration.test.ts"],
+  "testPathIgnorePatterns": ["/node_modules/"],
+  "transform": {
+    "^.+\\.(ts|tsx)$": ["ts-jest", { "tsconfig": "tsconfig.test.json" }]
+  },
+  "moduleFileExtensions": ["ts", "tsx", "js", "json", "node"]
+}

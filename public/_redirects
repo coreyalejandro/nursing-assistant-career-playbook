@@ -1,0 +1,4 @@
+# SPA fallback for Cloudflare Pages. The /api/* routes are served by Pages
+# Functions (functions/api), which run BEFORE this rule, so the API is never
+# shadowed. Everything else serves the React app shell.
+/*    /index.html   200

@@ -1,0 +1,11 @@
+# Cloudflare Pages configuration.
+# - pages_build_output_dir: Vite emits the static SPA here.
+# - nodejs_compat: lets the Pages Functions in /functions use Node-style APIs
+#   (process.env bridge, etc.). Required for the shared server/handlers.
+# Secrets (OPENROUTER_API_KEY, optional ADZUNA_*, SUPABASE_SERVICE_ROLE_KEY) and
+# the public build vars (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY) are set in
+# the Cloudflare dashboard → Settings → Environment variables (NOT committed).
+name = "nursing-assistant-career-playbook"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"

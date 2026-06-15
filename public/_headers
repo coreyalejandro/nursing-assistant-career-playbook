@@ -1,0 +1,9 @@
+# Security headers for the static app on Cloudflare Pages. (The API Function
+# sets its own JSON content-type + nosniff.) CSP is intentionally omitted here
+# to avoid blocking the Supabase / OpenRouter calls; add a tuned policy later.
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Permissions-Policy: geolocation=(), microphone=(), camera=()

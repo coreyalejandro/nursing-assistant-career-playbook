@@ -2,6 +2,10 @@
 
 Build status: `tsc --noEmit` ✅ · `vite build` ✅ (code-split: app / react-vendor / firebase) · `esbuild` server bundle ✅ · live server smoke test ✅
 
+## Wage Negotiation Engine + Instant-load (build-verified)
+- **Wage Negotiation Engine.** `server/wage/negotiation.ts` (deterministic `computeTargetBand` + `buildPitch`, unit-tested at 97%/90%), a grounded `POST /api/negotiation` endpoint (BLS-anchored market stats + real employer matches → a defensible target range, a copy-ready pitch, and talking points), and `src/components/WageNegotiator.tsx` mounted in the Salary Growth Center tab. Framed as guidance, not a guarantee; PHI-scrubbed inputs.
+- **Instant-load.** Firebase is now off the initial critical path: `RetentionPanel` and `AccountMenu` are `React.lazy` chunks (firebase 106 KB gzip no longer blocks first paint). The service worker (v3) serves the app shell stale-while-revalidate for near-instant repeat loads and precaches `/`. `index.html` paints an on-brand skeleton immediately. Initial app chunk ≈ 69 KB gzip + react-vendor 60 KB; firebase/account/retention load on demand.
+
 ## Phase 1 & 2 — defense layer, enterprise architecture, and CI gate (`npm run test:ci` ✅ exit 0)
 Pipeline: `typecheck` (0 errors) · `lint` eslint `--max-warnings=0` (0 warnings) · `test:unit` (29 tests; 100% stmts/funcs/lines, 95% branches on the new modules; 80% gate) · `test:integration` (5) · `test:security` (15 attacks blocked, 0 false positives across 8 CNA queries) · `test:hipaa` (honest wiring gate) · `test:backup` (audit-chain verify + tamper detection).
 

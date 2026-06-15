@@ -272,13 +272,13 @@ export default function AspiringPortal() {
         nearestProgram: nearestFallback,
         planSteps: path === "full_speed"
           ? [
-            `Enroll in Approved Program: Join ${nearestFallback.name} (${selectedState.hours} approved curriculum hours).`,
-            `Accumulate Hours: Complete state background registry check and clinical labs.`,
-            `Pass Cert Exams: Sit state ${selectedState.vendor} examination.`
-          ]
+              `Enroll in Approved Program: Join ${nearestFallback.name} (${selectedState.hours} approved curriculum hours).`,
+              `Accumulate Hours: Complete state background registry check and clinical labs.`,
+              `Pass Cert Exams: Sit state ${selectedState.vendor} examination.`
+            ]
           : path === "cautious"
-            ? ["Sample shadowing clinics online.", "Attend healthcare career informational seminars."]
-            : ["Explore Medical Representative/Reception pathways.", "Examine administrative medical records billing training."],
+          ? ["Sample shadowing clinics online.", "Attend healthcare career informational seminars."]
+          : ["Explore Medical Representative/Reception pathways.", "Examine administrative medical records billing training."],
         examVendor: selectedState.vendor,
         examLink: selectedState.examUrl,
         fundingLinks: [
@@ -365,10 +365,11 @@ export default function AspiringPortal() {
                 return (
                   <label
                     key={step.id}
-                    className={`flex items-start gap-3 p-3 border-2 transition-colors cursor-pointer rounded-none bg-white ${isChecked
-                      ? "border-emerald-500 bg-emerald-50/20"
-                      : "border-slate-300 hover:border-slate-900"
-                      }`}
+                    className={`flex items-start gap-3 p-3 border-2 transition-colors cursor-pointer rounded-none bg-white ${
+                      isChecked
+                        ? "border-emerald-500 bg-emerald-50/20"
+                        : "border-slate-300 hover:border-slate-900"
+                    }`}
                   >
                     <input
                       type="checkbox"
@@ -577,7 +578,8 @@ export default function AspiringPortal() {
             </p>
             <button
               onClick={() => { setQuizStarted(true); setCurrentQIndex(0); }}
-              className="font-mono text-xs font-black uppercase text-white bg-indigo-650 hover:bg-slate-950 border-2 border-slate-950 px-6 py-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-px cursor-pointer transition-colors"            >
+              className="font-mono text-xs font-black uppercase text-white bg-indigo-650 hover:bg-slate-950 border-2 border-slate-950 px-6 py-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-px cursor-pointer transition-colors"
+            >
               Start Clinical Fit Assessment →
             </button>
           </div>
@@ -607,13 +609,15 @@ export default function AspiringPortal() {
                       key={idx}
                       onClick={() => handleAnswerSelect(idx, option.score)}
                       type="button"
-                      className={`w-full text-left p-3 border-2 font-semibold text-xs leading-snug transition-colors rounded-none flex items-center gap-3 cursor-pointer ${isSelected
-                        ? "border-indigo-600 bg-indigo-50/20 text-indigo-950 font-black"
-                        : "border-slate-300 hover:border-slate-900 bg-white hover:bg-slate-50 text-slate-800"
-                        }`}
+                      className={`w-full text-left p-3 border-2 font-semibold text-xs leading-snug transition-colors rounded-none flex items-center gap-3 cursor-pointer ${
+                        isSelected
+                          ? "border-indigo-600 bg-indigo-50/20 text-indigo-950 font-black"
+                          : "border-slate-300 hover:border-slate-900 bg-white hover:bg-slate-50 text-slate-800"
+                      }`}
                     >
-                      <span className={`w-5 h-5 flex items-center justify-center border-2 rounded-none font-mono text-[10px] ${isSelected ? "border-indigo-600 bg-indigo-600 text-white" : "border-slate-400 bg-slate-50"
-                        }`}>
+                      <span className={`w-5 h-5 flex items-center justify-center border-2 rounded-none font-mono text-[10px] ${
+                        isSelected ? "border-indigo-600 bg-indigo-600 text-white" : "border-slate-400 bg-slate-50"
+                      }`}>
                         {idx + 1}
                       </span>
                       <span>{option.text}</span>
@@ -674,12 +678,13 @@ export default function AspiringPortal() {
                   </div>
                 </div>
 
-                <span className={`px-2 py-1 font-mono text-[10px] font-black uppercase tracking-widest border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${quizResult.path === "full_speed"
-                  ? "bg-emerald-500 text-slate-950"
-                  : quizResult.path === "cautious"
+                <span className={`px-2 py-1 font-mono text-[10px] font-black uppercase tracking-widest border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                  quizResult.path === "full_speed"
+                    ? "bg-emerald-500 text-slate-950"
+                    : quizResult.path === "cautious"
                     ? "bg-amber-400 text-slate-950"
                     : "bg-indigo-300 text-indigo-950"
-                  }`}>
+                }`}>
                   {quizResult.path === "full_speed" ? "⚡ FULL_SPEED ACCEL" : quizResult.path === "cautious" ? "⚠ CAUTIOUS EXPLORER" : "✦ SEGMENT RETARGET"}
                 </span>
               </div>
@@ -749,10 +754,11 @@ export default function AspiringPortal() {
               <button
                 key={clip.id}
                 onClick={() => handleClipSelect(clip)}
-                className={`w-full text-left p-3 border-2 transition-colors cursor-pointer rounded-none block space-y-1 ${activeClip.id === clip.id
-                  ? "border-indigo-600 bg-indigo-50/20"
-                  : "border-slate-350 bg-white hover:border-slate-900"
-                  }`}
+                className={`w-full text-left p-3 border-2 transition-colors cursor-pointer rounded-none block space-y-1 ${
+                  activeClip.id === clip.id
+                    ? "border-indigo-600 bg-indigo-50/20"
+                    : "border-slate-350 bg-white hover:border-slate-900"
+                }`}
               >
                 <div className="flex justify-between items-start gap-1">
                   <span className="font-display font-black text-xs uppercase leading-snug text-slate-950 block">

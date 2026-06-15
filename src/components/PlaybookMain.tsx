@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SalaryDashboard from "./SalaryDashboard";
 import JobBoard from "./JobBoard";
+import WageNegotiator from "./WageNegotiator";
 import InterviewSimulator from "./InterviewSimulator";
 import AspiringPortal from "./AspiringPortal";
 import WorkingPortal from "./WorkingPortal";
@@ -104,6 +105,7 @@ export default function PlaybookMain() {
               </div>
               <SalaryDashboard />
               <JobBoard />
+              <WageNegotiator />
             </div>
           </div>
         )}

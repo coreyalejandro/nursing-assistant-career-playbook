@@ -10,8 +10,9 @@
  * NOTE: this is a working offline scaffold. Full offline parity for the live
  * AI features is intentionally out of scope (they require connectivity).
  */
-const CACHE = "cna-playbook-v2";
+const CACHE = "cna-playbook-v3";
 const APP_SHELL = [
+  "/",
   "/offline.html",
   "/manifest.webmanifest",
   "/icons/icon.svg",
@@ -53,16 +54,18 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // App navigations: network-first with offline fallback.
+  // App navigations: stale-while-revalidate. Serve the cached shell instantly
+  // for near-instant repeat loads, refresh in the background, and fall back to
+  // the offline page when there's no cache and no network.
   if (req.mode === "navigate") {
     event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-          return res;
-        })
-        .catch(async () => (await caches.match(req)) || (await caches.match("/offline.html")))
+      caches.open(CACHE).then(async (cache) => {
+        const cached = (await cache.match(req)) || (await cache.match("/"));
+        const network = fetch(req)
+          .then((res) => { cache.put(req, res.clone()); return res; })
+          .catch(async () => (await cache.match("/offline.html")) || cached);
+        return cached || network;
+      })
     );
     return;
   }

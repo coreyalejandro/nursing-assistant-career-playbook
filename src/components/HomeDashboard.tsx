@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { usePlaybook } from "../lib/resumeState";
-import RetentionPanel from "./RetentionPanel";
 import { Sparkles, Heart, ClipboardCheck, MessageSquare, Award, ArrowRight, Landmark, ThumbsUp, HelpCircle } from "lucide-react";
+
+// Lazy-loaded so the Firebase chunk stays off the initial critical path.
+const RetentionPanel = lazy(() => import("./RetentionPanel"));
 
 export default function HomeDashboard() {
   const { state, dispatch } = usePlaybook();
@@ -54,7 +56,9 @@ export default function HomeDashboard() {
       </div>
 
       {/* Retention loop: account + progress dashboard + reminders */}
-      <RetentionPanel />
+      <Suspense fallback={<div className="border-2 border-slate-900 bg-white p-6 text-center font-mono text-xs text-slate-400">Loading your progress…</div>}>
+        <RetentionPanel />
+      </Suspense>
 
       {/* Georgia Stats Dashboard Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

@@ -20,24 +20,24 @@ export default function VignettePortfolio({ playbookData }: VignettePortfolioPro
   const handleTTS = (text: string) => {
     if ('speechSynthesis' in window) {
       if (isPlaying) {
-        window.speechSynthesis.cancel();
-        setIsPlaying(false);
+         window.speechSynthesis.cancel();
+         setIsPlaying(false);
       } else {
-        try {
-          const utterance = new SpeechSynthesisUtterance(text);
-          utterance.onend = () => setIsPlaying(false);
-          utterance.onerror = () => {
-            setIsPlaying(false);
-            alert("Audio playback was blocked or interrupted by your browser.");
-          };
-          // Filter out newlines so reading is smoother
-          utterance.text = text.replace(/\n/g, ". ");
-          window.speechSynthesis.speak(utterance);
-          setIsPlaying(true);
-        } catch (e) {
-          console.error("TTS Error:", e);
-          alert("Text-to-speech is unavailable in this browser environment.");
-        }
+         try {
+           const utterance = new SpeechSynthesisUtterance(text);
+           utterance.onend = () => setIsPlaying(false);
+           utterance.onerror = () => {
+             setIsPlaying(false);
+             alert("Audio playback was blocked or interrupted by your browser.");
+           };
+           // Filter out newlines so reading is smoother
+           utterance.text = text.replace(/\n/g, ". ");
+           window.speechSynthesis.speak(utterance);
+           setIsPlaying(true);
+         } catch (e) {
+           console.error("TTS Error:", e);
+           alert("Text-to-speech is unavailable in this browser environment.");
+         }
       }
     } else {
       alert("Text-to-speech is not supported by your browser.");
@@ -102,10 +102,11 @@ export default function VignettePortfolio({ playbookData }: VignettePortfolioPro
               <button
                 key={feat.id}
                 onClick={() => setActiveFeature(feat.id)}
-                className={`text-left p-4 rounded-none border-2 transition-all cursor-pointer ${activeFeature === feat.id
+                className={`text-left p-4 rounded-none border-2 transition-all cursor-pointer ${
+                  activeFeature === feat.id
                     ? "bg-slate-900 text-white border-slate-900 shadow-[4px_4px_0px_0px_rgba(220,38,38,1)]"
                     : "bg-slate-50 border-slate-300 hover:border-slate-800 hover:bg-white text-slate-800"
-                  }`}
+                }`}
               >
                 <div className={`font-mono text-[10px] font-bold mb-1 ${activeFeature === feat.id ? "text-amber-400" : "text-red-600"}`}>
                   {feat.num}
@@ -132,7 +133,7 @@ export default function VignettePortfolio({ playbookData }: VignettePortfolioPro
 
             {/* Dynamic Content Frame */}
             <div className="p-6 md:p-8 min-h-[420px] flex flex-col bg-slate-900/60 font-sans">
-
+              
               {activeFeature === "vignette" && (
                 <div className="space-y-4">
                   <div className="flex justify-between items-start border-b border-slate-800 pb-3">
@@ -359,7 +360,7 @@ export default function VignettePortfolio({ playbookData }: VignettePortfolioPro
             </div>
           </div>
         </div>
-
+        
         {/* HIPAA Disclaimer Banner */}
         <div className="mt-8 bg-slate-100 border border-slate-300 p-4 text-[10px] sm:text-xs font-sans text-slate-500 leading-relaxed max-w-4xl mx-auto flex gap-3">
           <AlertOctagon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 flex-shrink-0 mt-0.5" />

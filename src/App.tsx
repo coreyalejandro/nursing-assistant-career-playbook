@@ -43,9 +43,9 @@ function AppContent() {
       </main>
 
       {/* Adaptive Page Feedback Widget */}
-      <AdaptiveFeedback
-        currentUrl={`https://cna-playbook.local${state.activeTab}`}
-        currentViewMode={state.activeTab === '/' ? 'home' : state.activeTab.replace(/^\//, '')}
+      <AdaptiveFeedback 
+        currentUrl={`https://cna-playbook.local${state.activeTab}`} 
+        currentViewMode={state.activeTab === '/' ? 'home' : state.activeTab.replace(/^\//, '')} 
       />
 
       {/* Floating App Assistant Trigger & Modal Dialog */}

@@ -12,7 +12,7 @@ export default function ResumeBuilder({ playbookData, onUpdatePlaybook }: Resume
   const [competencies, setCompetencies] = useState(playbookData.resume.clinicalCompetencies.join(', '));
   const [safetyPoints, setSafetyPoints] = useState(playbookData.resume.mobilitySafety.join(', '));
   const [systems, setSystems] = useState(playbookData.resume.systemsAdmin.join(', '));
-
+  
   const [experiences, setExperiences] = useState(playbookData.resume.experiences);
   const [copiedText, setCopiedText] = useState(false);
   const [savedStatus, setSavedStatus] = useState(false);
@@ -242,7 +242,7 @@ ${exp.bullets.map(b => `- ${b.text}`).join('\n')}
                   <span className="font-bold text-xs uppercase text-slate-950">{exp.title} — {exp.company}</span>
                   <span className="font-mono text-[9px] text-slate-500 uppercase font-bold">{exp.dateRange}</span>
                 </div>
-
+                
                 {/* Underlining items */}
                 <div className="space-y-2">
                   {exp.bullets.map((bullet, bulletIdx) => (

@@ -12,6 +12,7 @@
     "server/defense/**/*.ts",
     "server/hipaa/rbac.ts",
     "server/llm/FallbackProvider.ts",
+    "server/wage/negotiation.ts",
     "src/lib/enterpriseRuntime.ts"
   ],
   "coveragePathIgnorePatterns": ["/node_modules/", "\\.test\\.ts$", "\\.integration\\.test\\.ts$"]

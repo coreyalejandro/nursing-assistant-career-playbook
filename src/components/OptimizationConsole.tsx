@@ -40,10 +40,10 @@ export default function OptimizationConsole({
       setSystemLogs((prev) => [
         ...prev,
         prev.length === 3 ? "Matching words to hospital job filters..." :
-          prev.length === 4 ? "Rewriting job duties to highlight exact safety numbers..." :
-            prev.length === 5 ? "Updating warehouse numbers to show medical supply skill..." :
-              prev.length === 6 ? "Making stories and text easy to read for recruiters..." :
-                "Running final check against hospital expectations..."
+        prev.length === 4 ? "Rewriting job duties to highlight exact safety numbers..." :
+        prev.length === 5 ? "Updating warehouse numbers to show medical supply skill..." :
+        prev.length === 6 ? "Making stories and text easy to read for recruiters..." :
+        "Running final check against hospital expectations..."
       ]);
     }, 400);
 
@@ -110,10 +110,11 @@ export default function OptimizationConsole({
                 <button
                   key={sec.id}
                   onClick={() => setSector(sec.id as TargetSector)}
-                  className={`flex items-center gap-3 px-4 py-3 border-2 transition-all cursor-pointer ${sector === sec.id
-                    ? "bg-indigo-50 border-indigo-600 text-slate-900 shadow-[3px_3px_0px_0px_rgba(79,70,229,1)] font-bold"
-                    : "bg-white border-slate-300 text-slate-600 hover:border-slate-800 hover:text-slate-950"
-                    }`}
+                  className={`flex items-center gap-3 px-4 py-3 border-2 transition-all cursor-pointer ${
+                    sector === sec.id
+                      ? "bg-indigo-50 border-indigo-600 text-slate-900 shadow-[3px_3px_0px_0px_rgba(79,70,229,1)] font-bold"
+                      : "bg-white border-slate-300 text-slate-600 hover:border-slate-800 hover:text-slate-950"
+                  }`}
                 >
                   <span className="text-xl">{sec.icon}</span>
                   <div className="leading-tight">
@@ -194,12 +195,13 @@ export default function OptimizationConsole({
             {systemLogs.map((item, idx) => (
               <div
                 key={idx}
-                className={`py-0.5 border-b border-slate-900/60 last:border-0 ${item.startsWith("✓") ? "text-emerald-400" :
+                className={`py-0.5 border-b border-slate-900/60 last:border-0 ${
+                  item.startsWith("✓") ? "text-emerald-400" :
                   item.startsWith("❌") ? "text-rose-400" :
-                    item.startsWith("Analyzing") || item.startsWith("Restructuring") || item.startsWith("Sanitizing")
-                      ? "text-indigo-300"
-                      : "text-slate-300"
-                  }`}
+                  item.startsWith("Analyzing") || item.startsWith("Restructuring") || item.startsWith("Sanitizing")
+                    ? "text-indigo-300"
+                    : "text-slate-300"
+                }`}
               >
                 <span className="text-slate-600 select-none mr-2">[{1000 + idx}]</span>
                 {item}

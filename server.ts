@@ -27,6 +27,7 @@ import {
   getStateReqs,
   STATE_OPTIONS,
 } from "./server/stateRequirements";
+import { computeTargetBand, buildPitch } from "./server/wage/negotiation";
 
 dotenv.config();
 
@@ -642,6 +643,67 @@ Use only real employer names found via grounding; do not fabricate facilities.`;
     res.json(payload);
   } catch (error: any) {
     safeError("Salary benchmarking failure:", error?.message || error);
+    res.status(500).json({ success: false, error: sanitizeClientError(error) });
+  }
+});
+
+/* -------------------------------------------------------------------------- */
+/* Wage Negotiation Engine (grounded market stats → deterministic band + pitch)*/
+/* -------------------------------------------------------------------------- */
+
+app.post("/api/negotiation", ...aiGuards, async (req, res) => {
+  try {
+    const { role, location, yearsExperience, currentWage, strengths } = req.body || {};
+    const safeRole = redactHighRiskPHI(String(role || "Certified Nursing Assistant")).text.slice(0, 80);
+    const safeLocation = redactHighRiskPHI(String(location || "")).text.slice(0, 80);
+    const safeStrengths = Array.isArray(strengths)
+      ? strengths.slice(0, 6).map((s: any) => redactHighRiskPHI(String(s)).text.slice(0, 120))
+      : [];
+
+    let stats = { median: 21.5, p25: 18.5, p75: 24.5 };
+    let employers: { name: string; wageRange?: string }[] = [];
+    let grounded = false;
+
+    if (process.env.GEMINI_API_KEY) {
+      try {
+        const ai = getGemini();
+        const prompt = `Using Google Search, find current hourly wage data for "${safeRole}" roles${safeLocation ? ` near ${safeLocation}` : " in the United States"}. Anchor figures to U.S. BLS OEWS (SOC 31-1131, Nursing Assistants) for that area, then refine with live postings. Also list up to 3 real employers currently hiring with their posted wage range.
+Return ONLY JSON: {"median": number, "p25": number, "p75": number, "employers": [{"name": "string (real employer)", "wageRange": "string"}], "source": "string"}. Use only real employer names found via grounding; never fabricate.`;
+        const resp = await ai.models.generateContent({
+          model: "gemini-3.5-flash",
+          contents: prompt,
+          config: withSafety({
+            tools: [{ googleSearch: {} }],
+            toolConfig: { includeServerSideToolInvocations: true },
+            responseMimeType: "application/json",
+          }),
+        });
+        const data = JSON.parse(resp.text || "{}");
+        if (data.median) {
+          const m = Number(data.median);
+          stats = { median: m, p25: Number(data.p25 || m - 3), p75: Number(data.p75 || m + 3) };
+          employers = Array.isArray(data.employers) ? data.employers.slice(0, 3) : [];
+          grounded = true;
+        }
+      } catch (err: any) {
+        safeWarn("Negotiation grounding failed; using BLS-anchored estimate:", err?.message || err);
+      }
+    }
+
+    const band = computeTargetBand({
+      yearsExperience: Number(yearsExperience) || 0,
+      currentWage: currentWage ? Number(currentWage) : undefined,
+      ...stats,
+    });
+    const { pitch, talkingPoints } = buildPitch(
+      { role: safeRole, location: safeLocation, yearsExperience: Number(yearsExperience) || 0, strengths: safeStrengths },
+      band,
+      employers
+    );
+
+    res.json({ success: true, band, stats, employers, pitch, talkingPoints, grounded });
+  } catch (error: any) {
+    safeError("Negotiation endpoint failed:", error?.message || error);
     res.status(500).json({ success: false, error: sanitizeClientError(error) });
   }
 });

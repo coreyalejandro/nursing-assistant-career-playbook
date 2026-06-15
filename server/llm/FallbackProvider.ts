@@ -1,14 +1,31 @@
 /**
  * server/llm/FallbackProvider.ts
- * Priority-ordered multi-provider fallback with a Firestore-backed circuit
- * breaker. State lives in Firestore (not in-process) so it survives serverless
- * cold starts / instance churn on Cloud Run.
+ * Priority-ordered multi-provider fallback with a persistent circuit breaker.
+ * Breaker state lives in an injected document store (not in-process) so it
+ * survives serverless cold starts / instance churn at the edge.
  *
- * `db` is injected (a firebase-admin Firestore, or any compatible shape) so the
- * logic is unit-testable with an in-memory fake — see FallbackProvider.test.ts.
+ * `db` is any object matching the small CircuitStore shape below — a Supabase-
+ * backed adapter, a firebase-admin Firestore, or the in-memory fake in the
+ * tests. The breaker therefore has no hard dependency on any vendor SDK.
+ * See FallbackProvider.test.ts.
  */
-import type { Firestore } from 'firebase-admin/firestore';
 import type { LLMProvider, GenerationRequest, GenerationResponse } from './LLMProvider';
+
+/** Minimal document-store contract the breaker needs (vendor-neutral). */
+export interface CircuitStore {
+  collection(name: string): {
+    doc(id: string): {
+      get(): Promise<{ exists: boolean; data: () => any }>;
+      set(value: any): Promise<void>;
+    };
+  };
+  runTransaction(
+    fn: (tx: {
+      get(ref: any): Promise<{ exists: boolean; data: () => any }>;
+      set(ref: any, value: any): void;
+    }) => Promise<void>
+  ): Promise<void>;
+}
 
 interface CircuitBreakerState {
   failures: number;
@@ -19,13 +36,13 @@ interface CircuitBreakerState {
 
 export class FallbackProvider {
   private providers: LLMProvider[];
-  private db: Firestore;
+  private db: CircuitStore;
   private readonly CIRCUIT_THRESHOLD = 3;
   private readonly CIRCUIT_TIMEOUT_MS = 300000;
   private PROVIDER_TIMEOUT_MS = 5000;
   private readonly COLLECTION = 'llmCircuitBreaker';
 
-  constructor(providers: LLMProvider[], db: Firestore, timeoutMs?: number) {
+  constructor(providers: LLMProvider[], db: CircuitStore, timeoutMs?: number) {
     this.providers = [...providers].sort((a, b) => a.priority - b.priority);
     this.db = db;
     if (typeof timeoutMs === 'number') this.PROVIDER_TIMEOUT_MS = timeoutMs;

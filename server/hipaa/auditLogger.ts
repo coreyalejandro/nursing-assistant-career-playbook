@@ -5,13 +5,13 @@
  * Each event's hash includes the previous event's hash, so any retroactive
  * edit breaks the chain and is detectable by verifyChain(). Storage is behind
  * an injectable AuditStore:
- *   - FirestoreAuditStore: production — writes to Firestore AND an immutable,
- *     versioned GCS bucket; reads are paged (chunked) for OOM safety.
+ *   - SupabaseAuditStore: production — appends to the RLS-protected,
+ *     append-only `enterprise.audit_log` table (see 0002_enterprise.sql);
+ *     reads are paged (chunked) for OOM safety.
  *   - InMemoryAuditStore: CI/tests — no live infrastructure required.
  */
 import crypto from 'node:crypto';
-import type { Firestore } from 'firebase-admin/firestore';
-import { Storage } from '@google-cloud/storage';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export interface AuditEvent {
   eventId: string;
@@ -54,33 +54,54 @@ export class InMemoryAuditStore implements AuditStore {
   }
 }
 
-export class FirestoreAuditStore implements AuditStore {
-  private storage: Storage;
+export class SupabaseAuditStore implements AuditStore {
+  /**
+   * @param client  An injected Supabase client (server-side, service-role key)
+   *                so writes land in the append-only ledger regardless of RLS.
+   */
   constructor(
-    private db: Firestore,
-    private gcsBucket: string,
-    private collection = 'audit',
-    private tenantId?: string
-  ) {
-    this.storage = new Storage();
+    private client: SupabaseClient,
+    private schema = 'enterprise',
+    private table = 'audit_log'
+  ) {}
+
+  private from() {
+    return (this.client as any).schema(this.schema).from(this.table);
   }
-  private path(): string {
-    return this.tenantId ? `tenant/${this.tenantId}/${this.collection}` : this.collection;
-  }
+
   async append(event: AuditEvent): Promise<void> {
-    await this.db.collection(this.path()).doc(event.eventId).set(event);
-    const day = new Date(event.timestamp).toISOString().split('T')[0];
-    const fileName = `audit/${this.tenantId || 'free'}/${day}/${event.eventId}.json`;
-    await this.storage
-      .bucket(this.gcsBucket)
-      .file(fileName)
-      .save(JSON.stringify(event), { metadata: { contentType: 'application/json' } });
+    const { error } = await this.from().insert({
+      event_id: event.eventId,
+      ts: event.timestamp,
+      actor: event.actor,
+      action: event.action,
+      resource: event.resource,
+      tenant_id: event.tenantId ?? null,
+      outcome: event.outcome,
+      previous_hash: event.previousHash,
+      hash: event.hash,
+    });
+    if (error) throw new Error(`audit append failed: ${error.message}`);
   }
+
   async page(afterTimestamp: number | null, limit: number): Promise<AuditEvent[]> {
-    let q = this.db.collection(this.path()).orderBy('timestamp').limit(limit);
-    if (afterTimestamp !== null) q = q.startAfter(afterTimestamp);
-    const snap = await q.get();
-    return snap.docs.map((d) => d.data() as AuditEvent);
+    let q = this.from().select('*').order('ts', { ascending: true }).limit(limit);
+    if (afterTimestamp !== null) q = q.gt('ts', afterTimestamp);
+    const { data, error } = await q;
+    if (error) throw new Error(`audit page failed: ${error.message}`);
+    return (data || []).map(
+      (r: any): AuditEvent => ({
+        eventId: r.event_id,
+        timestamp: Number(r.ts),
+        actor: r.actor,
+        action: r.action,
+        resource: r.resource,
+        tenantId: r.tenant_id ?? undefined,
+        outcome: r.outcome,
+        previousHash: r.previous_hash,
+        hash: r.hash,
+      })
+    );
   }
 }
 

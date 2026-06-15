@@ -32,7 +32,7 @@ function verifyHipaaReadiness() {
   const required: Record<string, string> = {
     auditLogger: '../hipaa/auditLogger.ts',
     rbac: '../hipaa/rbac.ts',
-    tenantIsolationRules: '../../firestore.rules.enterprise',
+    tenantIsolationRules: '../../supabase/migrations/0002_enterprise.sql',
     outputValidation: '../defense/outputValidator.ts',
     inputFilter: '../defense/inputFilter.ts',
   };

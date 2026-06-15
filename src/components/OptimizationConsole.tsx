@@ -88,7 +88,7 @@ export default function OptimizationConsole({
                 AI ACTIVE
               </span>
             </h3>
-            <p className="font-mono text-[11px] text-slate-300">Powered by Gemini · Adjusts text instantly</p>
+            <p className="font-mono text-[11px] text-slate-300">Powered by AI · Adjusts text instantly</p>
           </div>
         </div>
         <div className="flex items-center gap-2 text-xs font-mono text-amber-400 bg-slate-950 px-3 py-1.5 border border-slate-800">
@@ -167,7 +167,7 @@ export default function OptimizationConsole({
             {isOptimizing ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-white" />
-                Optimizing & Tailoring Playbook via Gemini...
+                Optimizing & Tailoring Playbook via AI...
               </>
             ) : (
               <>

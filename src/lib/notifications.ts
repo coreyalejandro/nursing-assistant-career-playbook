@@ -10,11 +10,11 @@
  *       • a gentle weekly check-in if it's been 7+ days since last visit
  *     De-duplicated via localStorage so users are never spammed.
  *
- * BACKGROUND PUSH (when the tab is closed) requires Firebase Cloud Messaging:
+ * BACKGROUND PUSH (when the tab is closed) uses the standard Web Push API:
  *   - enablePushIfConfigured() is a ready hook that activates only when you set
- *     VITE_FIREBASE_VAPID_KEY (Firebase console → Project settings → Cloud
- *     Messaging → Web Push certificates) and add firebase/messaging. The
- *     service worker already carries the push + notificationclick handlers.
+ *     VITE_PUSH_VAPID_KEY (your VAPID public key) and wire a push subscription
+ *     to a send service. The service worker already carries the push +
+ *     notificationclick handlers. This is vendor-neutral (no Firebase needed).
  * ---------------------------------------------------------------------------
  */
 
@@ -131,13 +131,14 @@ export async function runReminderCheck(opts: { renewalDate?: string }): Promise<
 }
 
 /**
- * Background push scaffold. No-ops unless VITE_FIREBASE_VAPID_KEY is set.
- * When you're ready: `npm i firebase` already includes messaging; import
- * getMessaging/getToken from "firebase/messaging", register the token with
- * your send service, and the service worker's push handler displays it.
+ * Background push scaffold. No-ops unless VITE_PUSH_VAPID_KEY is set.
+ * When you're ready: subscribe via the standard PushManager
+ * (registration.pushManager.subscribe with your VAPID public key), register
+ * the subscription with your send service, and the service worker's push
+ * handler displays it. Vendor-neutral — no Firebase dependency.
  */
 export async function enablePushIfConfigured(): Promise<boolean> {
-  const vapid = (import.meta as any).env?.VITE_FIREBASE_VAPID_KEY;
+  const vapid = (import.meta as any).env?.VITE_PUSH_VAPID_KEY;
   if (!vapid) return false;
   // Intentionally left as an integration point — see ENTERPRISE.md / CHANGES.md.
   return false;

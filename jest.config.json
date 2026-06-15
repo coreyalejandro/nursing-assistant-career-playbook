@@ -12,6 +12,7 @@
     "server/defense/**/*.ts",
     "server/hipaa/rbac.ts",
     "server/llm/FallbackProvider.ts",
+    "server/llm/openrouter.ts",
     "server/wage/negotiation.ts",
     "src/lib/enterpriseRuntime.ts"
   ],

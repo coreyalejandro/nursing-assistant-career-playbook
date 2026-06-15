@@ -38,7 +38,8 @@ server smoke test all pass). This page is in plain English. The deep technical l
 
 ```bash
 npm install
-# put your Gemini key in a file named .env.local  (see .env.example)
+# put your OpenRouter key in a file named .env.local  (see .env.example)
+# get a free key at openrouter.ai/keys
 npm run dev
 ```
 Then open the URL it prints. (`npm run dev` runs the server + app together.)
@@ -46,7 +47,7 @@ Then open the URL it prints. (`npm run dev` runs the server + app together.)
 To test the real production build locally:
 ```bash
 npm run build
-NODE_ENV=production GEMINI_API_KEY=your_key_here npm start
+NODE_ENV=production OPENROUTER_API_KEY=your_key_here npm start
 ```
 
 ---
@@ -71,18 +72,18 @@ Then on GitHub, click **"Compare & pull request"** for the `hardening` branch an
 
 ---
 
-## 4) Redeploy to Cloud Run
+## 4) Deploy
 
-**Simplest:** use the **Redeploy** button in AI Studio for this app — it rebuilds and ships.
+> **Note:** this project is migrating off Google AI Studio / Cloud Run to **Vercel + Supabase + OpenRouter** (more future-proof, no Google lock-in). The Vercel deploy steps will replace this section once that migration lands. Until then, the Cloud Run path below still works.
 
-**Or with the gcloud CLI:**
+**With the gcloud CLI:**
 ```bash
 gcloud run deploy nursing-assistant-career-playbook \
   --source . \
   --region us-west2 \
   --allow-unauthenticated \
   --set-env-vars NODE_ENV=production \
-  --update-secrets GEMINI_API_KEY=GEMINI_API_KEY:latest
+  --update-secrets OPENROUTER_API_KEY=OPENROUTER_API_KEY:latest
 ```
 (The server now honors Cloud Run's `$PORT` automatically.)
 
@@ -95,7 +96,7 @@ These finish the security story and can't be done from code:
 - [ ] *(Optional)* **Background push when the app is closed:** in Firebase console → **Project settings → Cloud Messaging → Web Push certificates**, generate a key and set it as `VITE_FIREBASE_VAPID_KEY`. Local reminders work without this.
 - [ ] **Restrict the Firebase web API key** (Google Cloud Console → Credentials → HTTP referrer + API restrictions) and turn on **Firebase App Check**. The key in `firebase-applet-config.json` is a public client ID by design, but restricting it blocks abuse.
 - [ ] **Set a budget alert** on the project so AI usage can't surprise you.
-- [ ] **Confirm the `GEMINI_API_KEY`** is stored as a **Secret** (not a plain env var) and rotate it if it was ever shared.
+- [ ] **Confirm the `OPENROUTER_API_KEY`** is stored as a **Secret** (not a plain env var) and rotate it if it was ever shared.
 - [ ] (Optional) Put **Cloud Armor** in front of Cloud Run for network-level rate limiting on top of the app-level limits already added.
 
 ---

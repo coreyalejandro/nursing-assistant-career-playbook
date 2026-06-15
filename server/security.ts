@@ -234,7 +234,7 @@ const GENERIC_ERROR =
  */
 export function sanitizeClientError(err: any): string {
   const msg = (err && (err.message || err.toString())) || "";
-  if (/api[_ ]?key|GEMINI_API_KEY/i.test(msg)) {
+  if (/api[_ ]?key|OPENROUTER_API_KEY/i.test(msg)) {
     return "The AI service is not configured yet. Please contact the site administrator.";
   }
   if (err && (err.status === 429 || /quota|rate|429/i.test(msg))) {

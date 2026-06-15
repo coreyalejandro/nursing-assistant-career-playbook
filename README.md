@@ -14,12 +14,10 @@
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" alt="React 19" />
   <img src="https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Google-Gemini-8E75B2?logo=googlegemini&logoColor=white" alt="Gemini" />
-  <img src="https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?logo=firebase&logoColor=black" alt="Firebase" />
-  <img src="https://img.shields.io/badge/Deploy-Cloud%20Run-4285F4?logo=googlecloud&logoColor=white" alt="Cloud Run" />
+  <img src="https://img.shields.io/badge/AI-OpenRouter-6566F1?logo=openai&logoColor=white" alt="OpenRouter" />
+  <img src="https://img.shields.io/badge/Supabase-Auth%20%2B%20Postgres-3ECF8E?logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Deploy-Cloudflare%20Pages-F38020?logo=cloudflare&logoColor=white" alt="Cloudflare Pages" />
 </p>
-
-> **Live app:** https://nursing-assistant-career-playbook-1045681641454.us-west2.run.app
 
 ---
 
@@ -35,10 +33,10 @@ This Playbook is built for that gap. It is **not** a generic chatbot wrapper —
 
 ## What it does
 
-- **🧭 AI career coach (safety-guarded).** Powered by Google Gemini with explicit safety settings, an injection-resistant system instruction, a hard scope-of-practice boundary (no medical advice), and HIPAA-aware handling that declines and redacts protected health information.
+- **🧭 AI career coach (safety-guarded).** Powered by OpenRouter (model-agnostic — OpenAI, Anthropic, Llama, etc., with no vendor lock-in) behind a layered prompt-injection defense, an injection-resistant system instruction, a hard scope-of-practice boundary (no medical advice), and HIPAA-aware handling that declines and redacts protected health information.
 - **🗺️ 50-state + DC certification guidance.** A deterministic, rule-grounded dataset — federally-accurate baseline steps (OBRA '87 / 42 CFR §483) for every state, verified specifics where confirmed, and authoritative "verify on your official registry" links everywhere else. **No hallucinated fees or steps.**
-- **💵 Real wage data.** Salary benchmarks anchored to U.S. Bureau of Labor Statistics OEWS data and refined with live Google Search grounding; cached to control cost.
-- **🔎 National job search.** Live CNA / patient-care openings via search grounding (no longer region-locked).
+- **💵 Real wage data.** Salary benchmarks anchored to U.S. Bureau of Labor Statistics OEWS data and refined with live web-search grounding (OpenRouter `:online`); cached to control cost.
+- **🔎 National job search.** Live CNA / patient-care openings via live web-search grounding (no longer region-locked).
 - **🎤 Mock interviews & résumé tailoring.** STAR-method behavioral practice and ATS keyword optimization for CNA roles.
 - **🔁 Retention loop.** Google / guest sign-in, a cross-device progress dashboard (certification-renewal countdown + quarterly checklist), and reminder notifications — with a local-storage fallback so it works signed-out too.
 - **🌎 Bilingual (EN / ES).** Safety-critical strings translated, an in-app language toggle, and the coach replies in the user's language.
@@ -52,16 +50,16 @@ This Playbook is built for that gap. It is **not** a generic chatbot wrapper —
 | Layer | Choice |
 |---|---|
 | **Front end** | React 19 · Vite 6 · TypeScript · Tailwind CSS 4 (SPA) |
-| **Server** | Node · Express · `ws` (live voice) — single `server.ts` |
-| **AI** | `@google/genai` → `gemini-3.5-flash` (primary), `gemini-3.1-flash-lite` (fallback), `gemini-3.1-flash-live-preview` (voice) |
-| **Data / Auth** | Firebase Authentication + Cloud Firestore (owner-scoped rules) |
-| **Hosting** | Google Cloud Run (built via AI Studio) |
+| **Server** | Node · Express (`server.ts`) — being ported to Cloudflare Pages Functions for the edge deploy |
+| **AI** | OpenRouter (OpenAI-compatible Chat Completions) — any model via `OPENROUTER_MODEL` (default `openai/gpt-4o-mini`); `:online` adds live web search |
+| **Data / Auth** | **Supabase** — Postgres + Row-Level Security + Auth (Google OAuth + anonymous) |
+| **Hosting** | **Cloudflare Pages** (static SPA) + **Pages Functions** (the `/api` server) — no Google lock-in |
 
 ```
-Browser (PWA)  ──►  Express server  ──►  Gemini (safety settings + grounding)
-   │  React SPA            │  rate limiting · PHI scrubbing · caching · security headers
-   │                       └─►  /api/chat · /api/optimize · /api/jobs · /api/salary · /api/states
-   └─►  Firebase Auth + Firestore  (cross-device profile & progress)
+Browser (PWA)  ──►  API server  ──►  OpenRouter (any model + web grounding)
+   │  React SPA          │  injection defense · rate limiting · PHI scrubbing · caching · security headers
+   │                     └─►  /api/chat · /api/optimize · /api/jobs · /api/salary · /api/states
+   └─►  Supabase Auth + Postgres (RLS)  (cross-device profile & progress)
 ```
 
 ---
@@ -70,11 +68,11 @@ Browser (PWA)  ──►  Express server  ──►  Gemini (safety settings + g
 
 This app is hardened for a consumer (B2C) audience that should **never** enter PHI:
 
-- **Gemini safety settings** on every call; injection / prompt-extraction resistance.
+- **Layered prompt-injection defense** on every call (structural + high-signal + context-gated input filter, output validation); injection / prompt-extraction resistance is enforced in our own code, not delegated to the model vendor.
 - **PHI/PII scrubbing** — SSNs, card and record numbers are stripped before the model and before any log write; logs are redacted.
 - **Denial-of-wallet protection** — per-IP rate limiting + a per-session daily AI quota + response caching.
 - **Hardened transport** — CSP, HSTS, `X-Content-Type-Options`, frame options, a request-size cap, and sanitized error responses (no internal details leak).
-- **Sound data rules** — Firestore access is deny-by-default and owner-scoped; the Gemini API key is server-side only and never bundled to the client.
+- **Sound data rules** — Supabase Row-Level Security is deny-by-default and owner-scoped (a user can only read/write their own profile row); the model (OpenRouter) API key and the Supabase service-role key are server-side only and never bundled to the client.
 
 For any use that *does* involve PHI (e.g., a hospital deployment), see **[ENTERPRISE.md](ENTERPRISE.md)** for the HIPAA/BAA tier architecture (per-tenant isolation, customer-managed keys, SSO, audit logging).
 
@@ -86,12 +84,11 @@ For any use that *does* involve PHI (e.g., a hospital deployment), see **[ENTERP
 
 ```bash
 npm install
-# create .env.local and set your key (see .env.example)
-echo 'GEMINI_API_KEY="your_key_here"' > .env.local
+cp .env.example .env.local   # then fill in your keys (OpenRouter required; Supabase enables sign-in)
 npm run dev
 ```
 
-Open the printed URL. `npm run dev` runs the API server and the Vite app together.
+Open the printed URL. `npm run dev` runs the API server and the Vite app together. The app runs without Supabase (local-only progress); add the Supabase keys to enable sign-in + cross-device sync.
 
 ---
 
@@ -99,19 +96,15 @@ Open the printed URL. `npm run dev` runs the API server and the Vite app togethe
 
 ```bash
 npm run build      # vite build (client) + esbuild (server → dist/server.cjs)
-npm start          # NODE_ENV=production node dist/server.cjs
+npm start          # NODE_ENV=production node dist/server.cjs  (local prod check)
 ```
 
-Deploy to Cloud Run (the server honors the injected `$PORT`):
+**Deploy → Cloudflare Pages** (connect this GitHub repo in the Cloudflare dashboard → push to `main` auto-builds and ships):
+- **Build command:** `npm run build` · **Output directory:** `dist`
+- **Server/API:** runs as **Cloudflare Pages Functions** (the `/api` routes), so the secret keys never reach the browser.
+- **Secrets (Cloudflare → Settings → Environment variables):** `OPENROUTER_API_KEY`, optional `OPENROUTER_MODEL`, optional Adzuna keys, and the public build vars `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`.
 
-```bash
-gcloud run deploy nursing-assistant-career-playbook \
-  --source . --region us-west2 --allow-unauthenticated \
-  --set-env-vars NODE_ENV=production \
-  --update-secrets GEMINI_API_KEY=GEMINI_API_KEY:latest
-```
-
-> To enable accounts/sync and reminders, finish the one-time Firebase console steps in **[START-HERE.md](START-HERE.md) §5** (enable Google + Anonymous sign-in, add your authorized domain, deploy `firestore.rules`).
+See **[START-HERE.md](START-HERE.md) §4** for the step-by-step Cloudflare deploy and **§5** for the one-time Supabase setup (enable Google + Anonymous sign-in, add your site to the redirect allow-list, run the SQL in `supabase/migrations/`).
 
 ---
 
@@ -119,22 +112,28 @@ gcloud run deploy nursing-assistant-career-playbook \
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `GEMINI_API_KEY` | ✅ | Server-side Gemini API access |
-| `APP_URL` | — | Hosted URL (self-links + live-voice origin allow-list) |
+| `OPENROUTER_API_KEY` | ✅ | Server-side model access (get one at openrouter.ai/keys) |
+| `OPENROUTER_MODEL` | — | Which model to route to (default `openai/gpt-4o-mini`) |
+| `VITE_SUPABASE_URL` | — | Supabase project URL — enables sign-in + cross-device sync (public) |
+| `VITE_SUPABASE_ANON_KEY` | — | Supabase anon key (public; bounded by Row-Level Security) |
+| `SUPABASE_SERVICE_ROLE_KEY` | — | Server-only secret; needed only by the enterprise audit store |
+| `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` | — | Live jobs API (free keys at developer.adzuna.com) |
+| `APP_URL` | — | Hosted URL (self-links + OpenRouter HTTP-Referer attribution) |
 | `NODE_ENV` | — | `production` serves the built `/dist` assets |
-| `PORT` | — | Injected by Cloud Run / AI Studio (default 8080) |
+| `PORT` | — | Injected by the host (default 8080) |
 | `VITE_APP_TIER` | — | `free` (default) · `pro` · `enterprise` feature flags |
-| `VITE_FIREBASE_VAPID_KEY` | — | Enables FCM background push (local reminders work without it) |
+| `VITE_PUSH_VAPID_KEY` | — | Enables Web Push background reminders (local reminders work without it) |
 
 ---
 
 ## Project structure
 
 ```
-├── server.ts                 # Express + ws API server (Gemini, rate limiting, grounding)
+├── server.ts                 # Express API server (OpenRouter, rate limiting, grounding)
 ├── server/
+│   ├── llm/openrouter.ts     # OpenRouter client (chat, model resolution, provider class)
 │   ├── security.ts           # headers, rate limiter, PHI scrubbing, error sanitization, cache
-│   ├── safety.ts             # Gemini safety settings + system instructions
+│   ├── safety.ts             # model-agnostic system instruction + scope boundary
 │   └── stateRequirements.ts  # deterministic 50-state + DC certification dataset
 ├── src/
 │   ├── components/           # UI (Home, Resume, Playbook, Audit, chat, RetentionPanel, …)

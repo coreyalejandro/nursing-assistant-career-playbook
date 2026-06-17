@@ -43,7 +43,7 @@ This Playbook is built for that gap. It is **not** a generic chatbot wrapper —
 - **🔎 National job search.** Live CNA / patient-care openings via live web-search grounding (no longer region-locked).
 - **🎤 Mock interviews & résumé tailoring.** STAR-method behavioral practice and ATS keyword optimization for CNA roles.
 - **🔁 Retention loop.** Google / guest sign-in (Supabase), a cross-device progress dashboard (certification-renewal countdown + quarterly checklist), and reminder notifications — with a local-storage fallback so it works signed-out too.
-- **💳 Freemium model.** **10 AI interactions/day free**; **Pro ($4.99/mo)** unlocks unlimited coaching. The daily quota is enforced server-side — in-memory on the local Express server, and at the edge via Cloudflare KV once the `RATE_LIMIT_KV` namespace is bound (see roadmap) — with an accessible upgrade paywall; entitlement is granted by a Stripe-webhook → `profiles.plan`.
+- **💳 Freemium model.** **10 AI interactions/day free**; **Pro ($4.99/mo)** unlocks unlimited coaching. The daily quota is enforced server-side — at the edge via Cloudflare KV (the `RATE_LIMIT_KV` namespace is bound and live as of 2026-06-17), and in-memory on the local Express server for dev — with an accessible upgrade paywall; entitlement is granted by a Stripe-webhook → `profiles.plan`.
 - **🌎 Bilingual (EN / ES).** Safety-critical strings translated, an in-app language toggle, and the coach replies in the user's language.
 - **📲 Installable PWA + offline mode.** Works on a phone with no signal, including static certification guidance and the **988** crisis line.
 - **🆘 Burnout support.** Trauma-informed tone with explicit, non-clinical escalation to the 988 Suicide & Crisis Lifeline.
@@ -77,7 +77,7 @@ This app is hardened for a consumer (B2C) audience that should **never** enter P
 
 - **Layered prompt-injection defense** on every call (structural + high-signal + context-gated input filter, output validation); injection / prompt-extraction resistance is enforced in our own code, not delegated to the model vendor.
 - **PHI/PII scrubbing** — SSNs, card and record numbers are stripped before the model and before any log write; logs are redacted.
-- **Denial-of-wallet protection** — distributed **Cloudflare KV** per-IP rate limiting at the edge (code-ready; activates once the `RATE_LIMIT_KV` namespace is bound — see roadmap), an in-memory limiter for local / single-instance runs, the per-session freemium daily AI quota, and response caching.
+- **Denial-of-wallet protection** — distributed **Cloudflare KV** per-IP rate limiting at the edge (live; `RATE_LIMIT_KV` bound 2026-06-17), an in-memory limiter for local / single-instance runs, the per-session freemium daily AI quota, and response caching.
 - **Hardened transport** — CSP, HSTS, `X-Content-Type-Options`, frame options, a request-size cap, and sanitized error responses (no internal details leak).
 - **Sound data rules** — Supabase Row-Level Security is deny-by-default and owner-scoped (a user can only read/write their own profile row); the model (OpenRouter) API key and the Supabase service-role key are server-side only and never bundled to the client.
 
@@ -170,12 +170,12 @@ See **[START-HERE.md](START-HERE.md) §4** for the step-by-step Cloudflare deplo
 
 **Live & verified:** AI coach + safety hardening · 50-state certification data · BLS-anchored wages & national jobs · mock interviews & résumé tailoring · accounts + progress dashboard + local reminders · EN/ES · PWA/offline · **freemium monetization (10/day free, $4.99/mo Pro)** · **automated accessibility (axe + Lighthouse a11y 90)** · **Playwright E2E** · **GitHub Actions CI**.
 
-**Code-complete — activates on one deploy step:** distributed Cloudflare-KV rate limiting and production edge enforcement of the freemium daily quota both fire once the `RATE_LIMIT_KV` namespace is bound (see roadmap). Until then the freemium quota is enforced in-memory on the Express server and the edge layer degrades gracefully (no hard cap).
+**Live on the edge (activated 2026-06-17):** the `RATE_LIMIT_KV` namespace is bound, so distributed Cloudflare-KV per-IP rate limiting and production edge enforcement of the freemium daily quota are **active** — verified live (the 11th–12th `/api/chat` call returns `402 FREE_LIMIT_REACHED`). The in-memory limiter remains for local Express dev.
 
 Recent (per the DeepSeek assessment, June 2026) — implemented & measured (re-verified 2026-06-17, median of 3 Lighthouse runs): Performance **68 → 85**, LCP **3.08 s → ~2.64 s**, CLS **0.476 → ~0.22**, accessibility **90** (see [PERFORMANCE.md](PERFORMANCE.md) / [ACCESSIBILITY.md](ACCESSIBILITY.md)). CLS remains above the 0.1 target (a CI warn; SSG of the landing view is the tracked next step).
 
 **On the path to investment-ready:**
-- [ ] Bind the `RATE_LIMIT_KV` namespace in production to activate edge enforcement (one Cloudflare step; code is ready).
+- [x] Bind the `RATE_LIMIT_KV` namespace in production to activate edge enforcement — **done 2026-06-17** (freemium `402` verified live).
 - [ ] Drive CLS < 0.1 by prerendering / static-generating the landing view (currently 0.225).
 - [ ] Expand verified state specifics beyond the five confirmed states.
 - [ ] "New job match" push alerts (stored feed + diff) on top of the existing reminders.

@@ -12,13 +12,10 @@ pages_build_output_dir = "dist"
 
 # Distributed rate limiting + freemium daily quota (server/kvLimiter,
 # server/freemium). The Functions enforce the 10/day free AI quota and per-IP
-# rate limit ONLY when this KV namespace is bound; without it they degrade
-# gracefully (no edge enforcement). To ACTIVATE on the live site:
-#   1) Create the namespace (needs a token with "Workers KV Storage: Edit", or
-#      the dashboard → Workers & Pages → KV → Create namespace "RATE_LIMIT_KV").
-#        npx wrangler kv namespace create RATE_LIMIT_KV
-#   2) Uncomment the block below and paste the returned id, then redeploy
-#      (or add the binding in the Pages project → Settings → Bindings).
-# [[kv_namespaces]]
-# binding = "RATE_LIMIT_KV"
-# id = "PASTE_KV_NAMESPACE_ID_HERE"
+# rate limit ONLY when this KV namespace is bound. Declaring it here ensures
+# `wrangler pages deploy` attaches the binding to the deployment itself (a
+# project-level binding alone is not reliably inherited by wrangler deploys).
+# ACTIVATED 2026-06-17: namespace "RATE_LIMIT_KV" created and bound.
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "f23dc0b9176b44fbb76fc07a062073e5"

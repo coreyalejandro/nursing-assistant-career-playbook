@@ -11,3 +11,5 @@ lhr-*.json
 *.log
 .env*
 !.env.example
+*.report.html
+*.report.json

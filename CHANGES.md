@@ -1,17 +1,19 @@
 # CHANGES — Hardening Pass (technical)
 
-Build status: `tsc --noEmit` ✅ · `vite build` ✅ · `esbuild` server bundle ✅ · `npm run test:ci` ✅ exit 0 (66 unit + 5 integration + security/HIPAA/backup gates) · Playwright e2e ✅ (7) · Lighthouse measured.
+Build status (re-verified 2026-06-17 on a clean `npm install`): `tsc --noEmit` ✅ · `vite build` ✅ · `esbuild` server bundle ✅ · `npm run test:ci` ✅ exit 0 (66 unit + 5 integration + security/HIPAA/backup gates) · `npm audit --omit=dev --audit-level=high` ✅ 0 vulnerabilities · Playwright e2e ✅ 7/7 · Lighthouse ✅ re-measured (perf 85 / a11y 90 / best-practices 93 / CLS ~0.22).
 
 ## DeepSeek P0/P1 recommendations (implemented · verified)
 Implements the five P0/P1 fixes from the DeepSeek assessment. Evidence is real (run in-sandbox), not asserted.
 
 1. **Freemium monetization (P0).** `server/freemium.ts` — FREE = 10 AI calls/day, PRO = unlimited; pure `decide()` + KV-backed `checkAndCount()` (unit-tested). Enforced at the edge in `functions/api/[[route]].ts` (402 + upgrade payload) and mirrored in-memory in `server.ts` for dev. Entitlement via `server/entitlement.ts` (reads `profiles.plan` over Supabase RLS). Client: `UpgradeModal.tsx` paywall (accessible), `GeminiChat` 402 handling, `lib/billing.ts` Stripe Payment Link builder, `lib/session.ts` session id. `profiles.plan` column + a trigger that blocks users self-granting Pro (only the service role may change `plan`). `functions/api/stripe-webhook.ts` flips plan→pro on `checkout.session.completed` (HMAC-verified via Web Crypto).
 2. **Accessibility (P0).** Global `prefers-reduced-motion` rule (the flagged gap); automated axe-core suite (`accessibility.test.tsx`, 0 violations); Lighthouse a11y **90** asserted ≥0.9 in CI. See ACCESSIBILITY.md.
-3. **Performance (P1).** Route-based code splitting (initial entry chunk **286 kB → 28 kB**), eager landing view, font preconnect, 600 kB chunk budget, Lighthouse CI budgets. Measured: perf **68 → 85**, LCP **3084 → 2589 ms**, CLS **0.476 → 0.225**, TBT **66 ms**. CLS still > 0.1 target (residual is Home CSR shift; SSG is the tracked next step). See PERFORMANCE.md.
+3. **Performance (P1).** Route-based code splitting (initial entry chunk now **36.66 kB / 12.08 kB gzip**, measured from the build output), eager landing view, font preconnect, 600 kB chunk budget, Lighthouse CI budgets. Re-measured 2026-06-17 (median of 3 runs): perf **68 → 85**, LCP **3084 → ~2640 ms**, CLS **0.476 → ~0.22**, TBT **~60–140 ms**. CLS is still > 0.1 (Home CSR shift; SSG is the tracked next step), so the Lighthouse CLS and LCP budgets are **warn** level, with accessibility (≥0.9) the hard error gate. See PERFORMANCE.md.
 4. **Distributed rate limiter (P1).** `server/kvLimiter.ts` — Cloudflare KV fixed-window counters (unit-tested with a fake KV), replacing the single-instance in-memory limiter at the edge. Binds via `wrangler.toml` `RATE_LIMIT_KV` (degrades gracefully until the namespace is bound).
 5. **E2E testing (P1).** Playwright (`playwright.config.ts` + `e2e/*.spec.ts`): 7 tests — app shell + API, chat safety boundary + freemium 402 paywall, PWA manifest + offline 988 page. All pass locally against the production server.
 
 Plus the report's P2/DevOps gaps: **GitHub Actions CI** (`.github/workflows/ci.yml`: test:ci → e2e → Lighthouse, with `npm audit`) and **Dependabot** (`.github/dependabot.yml`). New tests: 47 → **66** unit; coverage 99.21% stmts / 92.1% branch on the gated set.
+
+**Clean-install hardening (2026-06-17 re-verification).** A fresh `npm install` surfaced two issues that a stale `node_modules` had masked, both now fixed: (a) **dependency hygiene** — the build tools `vite`, `@vitejs/plugin-react`, and `@tailwindcss/vite` were in `dependencies`, dragging esbuild's dev-time advisory into the production tree; moved to `devDependencies` so `npm audit --omit=dev --audit-level=high` reports **0 vulnerabilities**, and `server.ts` now loads Vite via a dev-only dynamic `import()` (the prod `server.cjs` never requires it). (b) **removed an orphaned `src/firebase.ts`** (leftover from the pre-Supabase era, imported the uninstalled `firebase` package) that failed `tsc --noEmit` on a clean checkout — nothing referenced it (auth/persistence is Supabase via `userProfile.ts`).
 
 ## Re-platform Stage 1 — model layer: Google Gemini → OpenRouter (build-verified · test:ci ✅)
 **Why:** remove Google lock-in. OpenRouter is one OpenAI-compatible API in front of any model (OpenAI, Anthropic, Llama, …), so the model is now a config value (`OPENROUTER_MODEL`), not a hard dependency. Part of the larger move to Vercel + Supabase + OpenRouter.
@@ -55,6 +57,14 @@ Added deps — dev: jest, ts-jest, @types/jest, ts-node, eslint, typescript-esli
 - **Console prerequisites (one-time):** enable Google / Anonymous providers, add your authorized domain, and deploy `firestore.rules`. See START-HERE §5.
 
 ## New files
+
+> **Historical note.** The two sections below ("New files" and "Rewritten / edited")
+> document the original **Gemini-era** hardening pass. The model layer was later moved
+> to **OpenRouter** and the live-voice WebSocket was removed (see "Re-platform Stage 1"
+> above), so any reference here to `SAFETY_SETTINGS`, `withSafety()`, Gemini calls, or
+> the live-voice server describes that earlier phase, not the current code. The current
+> safety model is the app's own defense layer + the `CNA_COACH_SYSTEM_INSTRUCTION`.
+
 - **`server/security.ts`** — dependency-free hardening: `securityHeaders()` (CSP, HSTS, nosniff, X-Frame-Options, Permissions-Policy), `createRateLimiter()` (in-memory fixed-window per IP), `createSessionQuota()` (per-session daily AI budget), `redactHighRiskPHI()` (strips SSN/card/MRN before the model), `scrubForLog()` + `safeLog/Warn/Error` (PII-redacting logging), `sanitizeClientError()` (no internal leakage), `TTLCache`, `getClientIp()` (X-Forwarded-For aware).
 - **`server/safety.ts`** — `SAFETY_SETTINGS` (HARASSMENT / HATE / SEXUAL / DANGEROUS → BLOCK_MEDIUM_AND_ABOVE) applied to every Gemini call; `withSafety()` helper; hardened, injection-resistant `CNA_COACH_SYSTEM_INSTRUCTION`; upgraded `LIVE_VOICE_SYSTEM_INSTRUCTION` (was "You are a helpful CNA assistant"). Note: `HARM_CATEGORY_MEDICAL` from the audit does not exist in the Gemini API — medical refusal is enforced via DANGEROUS_CONTENT + the system instruction.
 - **`server/stateRequirements.ts`** — deterministic CNA certification lookup for **all 50 states + DC**. Federally-accurate baseline steps (OBRA '87 / 42 CFR §483) for every state; verified specifics for CA/TX/GA/NY/FL; authoritative "verify on official registry" link + `verified:false` everywhere else (no invented fees/steps). Exposes `getStateReqs()` and `STATE_OPTIONS`.

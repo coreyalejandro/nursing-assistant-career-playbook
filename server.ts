@@ -1,7 +1,6 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
-import { createServer as createViteServer } from "vite";
 
 import { securityHeaders, createRateLimiter, createSessionQuota, getClientIp } from "./server/security";
 import { decide, upgradePayload, FREE_DAILY_AI_LIMIT } from "./server/freemium";
@@ -105,6 +104,9 @@ app.get("/api/health", (_req, res) => send(res, healthHandler()));
 
 async function runServer() {
   if (process.env.NODE_ENV !== "production") {
+    // Dev-only: import Vite lazily so the production server bundle (dist/server.cjs)
+    // never requires it. Vite is a build/dev tool (devDependency), not a runtime dep.
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({ server: { middlewareMode: true }, appType: "spa" });
     app.use(vite.middlewares);
   } else {

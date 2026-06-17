@@ -47,7 +47,7 @@
     "jest": "^29.7.0",
     "jest-axe": "^9.0.0",
     "jest-environment-jsdom": "^29.7.0",
-    "tailwindcss": "^4.1.14",
+    "tailwindcss": "^4.3.1",
     "ts-jest": "^29.4.11",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",

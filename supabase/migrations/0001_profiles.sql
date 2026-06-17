@@ -18,6 +18,9 @@ create table if not exists public.profiles (
   playbook_overrides text,
   renewal_date       text,  -- ISO yyyy-mm-dd; kept as text to match the client contract
   progress_json      text check (progress_json is null or char_length(progress_json) <= 8192),
+  -- Monetization plan: 'free' (10 AI calls/day) or 'pro' (unlimited, $4.99/mo).
+  -- Flipped to 'pro' by the Stripe webhook (functions/api/stripe-webhook.ts).
+  plan               text not null default 'free' check (plan in ('free', 'pro')),
   created_at         timestamptz not null default now(),
   updated_at         timestamptz not null default now()
 );
@@ -40,6 +43,26 @@ drop trigger if exists profiles_touch_updated_at on public.profiles;
 create trigger profiles_touch_updated_at
   before update on public.profiles
   for each row execute function public.touch_updated_at();
+
+-- Monetization integrity: a normal user must NOT be able to grant themselves Pro
+-- by PATCHing their own row. Only the service role (used by the Stripe webhook)
+-- may change `plan`; for anyone else, any attempted change is silently reverted.
+create or replace function public.lock_plan_column()
+returns trigger
+language plpgsql
+as $$
+begin
+  if new.plan is distinct from old.plan and current_user <> 'service_role' then
+    new.plan = old.plan;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists profiles_lock_plan on public.profiles;
+create trigger profiles_lock_plan
+  before update on public.profiles
+  for each row execute function public.lock_plan_column();
 
 -- ----- Row-Level Security: a user may only read/write their own row. --------
 alter table public.profiles enable row level security;

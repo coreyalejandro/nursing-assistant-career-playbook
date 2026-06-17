@@ -3,7 +3,8 @@ import path from "path";
 import dotenv from "dotenv";
 import { createServer as createViteServer } from "vite";
 
-import { securityHeaders, createRateLimiter, createSessionQuota } from "./server/security";
+import { securityHeaders, createRateLimiter, createSessionQuota, getClientIp } from "./server/security";
+import { decide, upgradePayload, FREE_DAILY_AI_LIMIT } from "./server/freemium";
 import {
   chatHandler,
   optimizeHandler,
@@ -43,7 +44,36 @@ const aiLimiter = createRateLimiter({
 const aiDailyQuota = createSessionQuota(200);
 
 app.use("/api", apiLimiter);
-const aiGuards = [aiLimiter, aiDailyQuota];
+
+/* -------------------------------------------------------------------------- */
+/* Freemium daily quota (in-memory mirror of the edge gate)                    */
+/* 10 free AI calls/day; "pro" is unlimited. Production enforces this with the  */
+/* distributed KV gate in functions/api; this keeps local dev consistent.      */
+/* -------------------------------------------------------------------------- */
+const FREE_LIMIT = Number(process.env.FREE_DAILY_AI_LIMIT) || FREE_DAILY_AI_LIMIT;
+const freeCounters = new Map<string, { count: number; resetAt: number }>();
+function freemiumGuard(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const sid =
+    (req.headers["x-session-id"] as string) ||
+    (req.body && typeof req.body === "object" ? req.body.sessionId : "") ||
+    getClientIp(req);
+  const now = Date.now();
+  let c = freeCounters.get(sid);
+  if (!c || c.resetAt <= now) {
+    c = { count: 0, resetAt: now + 24 * 60 * 60 * 1000 };
+    freeCounters.set(sid, c);
+  }
+  // Dev has no Supabase entitlement lookup, so treat everyone as "free".
+  const d = decide("free", c.count, FREE_LIMIT);
+  if (!d.allowed) {
+    res.status(402).json(upgradePayload(d, process.env.UPGRADE_URL || process.env.VITE_UPGRADE_URL || ""));
+    return;
+  }
+  c.count += 1;
+  next();
+}
+
+const aiGuards = [aiLimiter, aiDailyQuota, freemiumGuard];
 
 /* -------------------------------------------------------------------------- */
 /* Routes — thin adapters over the shared, framework-neutral handlers.         */
@@ -60,7 +90,7 @@ app.post("/api/jobs/search", ...aiGuards, async (req, res) => send(res, await jo
 app.post("/api/quiz/result", ...aiGuards, async (req, res) => send(res, await quizResultHandler(req.body || {})));
 app.post("/api/negotiation", ...aiGuards, async (req, res) => send(res, await negotiationHandler(req.body || {})));
 
-app.get("/api/salary-benchmark", aiLimiter, async (req, res) =>
+app.get("/api/salary-benchmark", aiLimiter, freemiumGuard, async (req, res) =>
   send(res, await salaryBenchmarkHandler({ zip: req.query.zip as string, role: req.query.role as string }))
 );
 app.get("/api/states", (_req, res) => send(res, statesHandler()));

@@ -1,9 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, MapPin, Search, Zap, Bot, X, Trash2 } from 'lucide-react';
 import { useI18n } from '../lib/i18n';
+import { getSessionId } from '../lib/session';
+import { getAccessToken } from '../lib/supabase';
+import { useUserProfile } from '../lib/userProfile';
+import { getUpgradeUrl } from '../lib/billing';
+import UpgradeModal from './UpgradeModal';
 
 export function GeminiChat({ onClose }: { onClose: () => void }) {
   const { t } = useI18n();
+  const { user } = useUserProfile();
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [upgradeInfo, setUpgradeInfo] = useState<{ used?: number; limit?: number }>({});
   const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string }[]>(() => {
     const saved = localStorage.getItem('gemini_chat_history');
     if (saved) {
@@ -22,7 +30,8 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    messagesEndRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
   }, [messages]);
 
   useEffect(() => {
@@ -46,14 +55,26 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
     setLoading(true);
 
     try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'x-session-id': getSessionId(),
+      };
+      const token = await getAccessToken();
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
       const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage, history: messages, type })
+        headers,
+        body: JSON.stringify({ message: userMessage, history: messages, type, sessionId: getSessionId() })
       });
       const data = await res.json();
       if (res.ok) {
         setMessages(prev => [...prev, { role: 'model', text: data.text }]);
+      } else if (res.status === 402) {
+        // Freemium daily limit reached → surface the upgrade paywall.
+        setUpgradeInfo({ used: data.used, limit: data.limit });
+        setShowUpgrade(true);
+        setMessages(prev => [...prev, { role: 'model', text: data.error || "You've reached today's free limit. Upgrade to Pro for unlimited access." }]);
       } else {
         setMessages(prev => [...prev, { role: 'model', text: 'Error: ' + data.error }]);
       }
@@ -65,6 +86,7 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
   };
 
   return (
+    <>
     <div className="fixed bottom-4 right-4 w-96 max-w-[calc(100vw-2rem)] bg-slate-900 border-2 border-slate-700 shadow-[8px_8px_0px_0px_rgba(245,158,11,1)] z-50 flex flex-col h-[500px] max-h-[80vh]">
       <div className="flex bg-slate-950 p-3 border-b-2 border-slate-800 items-center justify-between">
         <div className="flex items-center gap-2">
@@ -158,5 +180,13 @@ export function GeminiChat({ onClose }: { onClose: () => void }) {
          </div>
       </div>
     </div>
+    <UpgradeModal
+      open={showUpgrade}
+      onClose={() => setShowUpgrade(false)}
+      upgradeUrl={getUpgradeUrl(user?.id)}
+      used={upgradeInfo.used}
+      limit={upgradeInfo.limit}
+    />
+    </>
   );
 }

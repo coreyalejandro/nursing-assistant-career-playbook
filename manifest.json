@@ -1,0 +1,26 @@
+[
+  {
+    "url": "http://localhost:34921/index.html",
+    "isRepresentativeRun": true,
+    "htmlPath": "/agent/workspace/napp/nursing-assistant-career-playbook-main/localhost-_index_html-2026_06_16_19_16_38.report.html",
+    "jsonPath": "/agent/workspace/napp/nursing-assistant-career-playbook-main/localhost-_index_html-2026_06_16_19_16_38.report.json",
+    "summary": {
+      "performance": 0.68,
+      "accessibility": 0.9,
+      "best-practices": 0.93,
+      "seo": 1
+    }
+  },
+  {
+    "url": "http://localhost:34921/offline.html",
+    "isRepresentativeRun": true,
+    "htmlPath": "/agent/workspace/napp/nursing-assistant-career-playbook-main/localhost-_offline_html-2026_06_16_19_16_52.report.html",
+    "jsonPath": "/agent/workspace/napp/nursing-assistant-career-playbook-main/localhost-_offline_html-2026_06_16_19_16_52.report.json",
+    "summary": {
+      "performance": 1,
+      "accessibility": 0.91,
+      "best-practices": 1,
+      "seo": 0.9
+    }
+  }
+]

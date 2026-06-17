@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+/* Fonts are preconnected + loaded via <link> in index.html (faster LCP than a
+   render-blocking CSS @import). */
 @import "tailwindcss";
 
 @theme {
@@ -9,7 +10,23 @@
 
 @layer base {
   body {
-    background-color: #f8fafc;
+    /* Match the app shell + skeleton background to avoid a paint flash. */
+    background-color: #efedea;
     font-family: var(--font-sans);
+  }
+}
+
+/* Accessibility: honor the OS "reduce motion" setting (WCAG 2.3.3 Animation
+   from Interactions / 2.2.2 Pause, Stop, Hide). Neutralizes Tailwind
+   transitions, the `motion` library's animations, and icon spins for users
+   who are sensitive to motion. [DeepSeek P0 accessibility fix] */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

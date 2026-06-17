@@ -19,7 +19,8 @@ export default defineConfig(() => {
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
     build: {
-      chunkSizeWarningLimit: 1000,
+      // Mobile-first PWA: warn earlier so chunks stay lean for limited-data users.
+      chunkSizeWarningLimit: 600,
       rollupOptions: {
         output: {
           // Split heavy vendors into separately-cached chunks so the Supabase

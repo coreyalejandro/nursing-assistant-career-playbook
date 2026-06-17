@@ -1,14 +1,30 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { PlaybookProvider, usePlaybook } from "./lib/resumeState";
 import Navigation from "./components/Navigation";
 import HomeDashboard from "./components/HomeDashboard";
-import ResumeBuilderMain from "./components/ResumeBuilderMain";
-import PlaybookMain from "./components/PlaybookMain";
-import AuditMain from "./components/AuditMain";
-import AboutMain from "./components/AboutMain";
 import { Heart, Sparkles } from "lucide-react";
-import { GeminiChat } from "./components/GeminiChat";
-import AdaptiveFeedback from "./components/AdaptiveFeedback";
+
+// Route-based code splitting: the landing view (HomeDashboard) is eager so the
+// first paint is stable (no fallback→content layout shift / good CLS + LCP).
+// The heavier secondary routes and the on-demand chat / feedback widgets load
+// as their own chunks. [DeepSeek P1 performance fix]
+const ResumeBuilderMain = React.lazy(() => import("./components/ResumeBuilderMain"));
+const PlaybookMain = React.lazy(() => import("./components/PlaybookMain"));
+const AuditMain = React.lazy(() => import("./components/AuditMain"));
+const AboutMain = React.lazy(() => import("./components/AboutMain"));
+const AdaptiveFeedback = React.lazy(() => import("./components/AdaptiveFeedback"));
+const GeminiChat = React.lazy(() =>
+  import("./components/GeminiChat").then((m) => ({ default: m.GeminiChat }))
+);
+
+function ViewFallback() {
+  return (
+    <div className="flex items-center justify-center py-24" role="status" aria-live="polite">
+      <span className="sr-only">Loading…</span>
+      <div className="h-8 w-8 rounded-full border-4 border-slate-200 border-t-amber-500 animate-spin" aria-hidden="true" />
+    </div>
+  );
+}
 
 function AppContent() {
   const { state } = usePlaybook();
@@ -38,15 +54,19 @@ function AppContent() {
       <Navigation />
 
       {/* 2. Main content block wrapper */}
-      <main id="main-content" className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-6 py-6 md:py-8 outline-none">
-        {renderActiveView()}
+      <main id="main-content" className="flex-1 min-h-[85vh] max-w-6xl w-full mx-auto px-4 md:px-6 py-6 md:py-8 outline-none">
+        <Suspense fallback={<ViewFallback />}>
+          {renderActiveView()}
+        </Suspense>
       </main>
 
-      {/* Adaptive Page Feedback Widget */}
-      <AdaptiveFeedback 
-        currentUrl={`https://cna-playbook.local${state.activeTab}`} 
-        currentViewMode={state.activeTab === '/' ? 'home' : state.activeTab.replace(/^\//, '')} 
-      />
+      {/* Adaptive Page Feedback Widget (lazy, non-critical) */}
+      <Suspense fallback={null}>
+        <AdaptiveFeedback
+          currentUrl={`https://cna-playbook.local${state.activeTab}`}
+          currentViewMode={state.activeTab === '/' ? 'home' : state.activeTab.replace(/^\//, '')}
+        />
+      </Suspense>
 
       {/* Floating App Assistant Trigger & Modal Dialog */}
       {!isAssistantOpen && (
@@ -61,7 +81,9 @@ function AppContent() {
       )}
 
       {isAssistantOpen && (
-        <GeminiChat onClose={() => setIsAssistantOpen(false)} />
+        <Suspense fallback={null}>
+          <GeminiChat onClose={() => setIsAssistantOpen(false)} />
+        </Suspense>
       )}
 
       {/* 3. Highly polished, professional clinical footer */}

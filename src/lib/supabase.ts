@@ -35,3 +35,18 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured
       },
     })
   : null;
+
+/**
+ * The current user's Supabase access token (JWT), or null when signed out /
+ * not configured. Sent as `Authorization: Bearer` on AI calls so the server
+ * can resolve a Pro entitlement (unlimited) vs. the free daily quota.
+ */
+export async function getAccessToken(): Promise<string | null> {
+  if (!supabase) return null;
+  try {
+    const { data } = await supabase.auth.getSession();
+    return data.session?.access_token ?? null;
+  } catch {
+    return null;
+  }
+}

@@ -14,6 +14,9 @@
     "server/llm/FallbackProvider.ts",
     "server/llm/openrouter.ts",
     "server/wage/negotiation.ts",
+    "server/kvLimiter.ts",
+    "server/freemium.ts",
+    "server/entitlement.ts",
     "src/lib/enterpriseRuntime.ts"
   ],
   "coveragePathIgnorePatterns": ["/node_modules/", "\\.test\\.ts$", "\\.integration\\.test\\.ts$"]
